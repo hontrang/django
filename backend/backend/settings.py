@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_mongoengine',
+    'rest_framework_swagger',
     'webapp'
 ]
 
@@ -87,7 +88,7 @@ DATABASES = {
 _MONGODB_USER = ''
 _MONGODB_PASSWD = ''
 _MONGODB_HOST = '127.0.0.1'
-_MONGODB_NAME = 'test'
+_MONGODB_NAME = 'django'
 _MONGODB_PORT = 27017
 
 connect(db=_MONGODB_NAME, host=_MONGODB_HOST, port=_MONGODB_PORT,username=_MONGODB_NAME, password= _MONGODB_PASSWD)

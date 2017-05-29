@@ -9,11 +9,11 @@ from rest_framework import generics
 #     return response
 #
 class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
+    queryset = Products.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'id'
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = Users.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'id'
