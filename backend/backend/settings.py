@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 from mongoengine import connect
+import logging
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -92,6 +94,7 @@ _MONGODB_NAME = 'django'
 _MONGODB_PORT = 27017
 
 connect(db=_MONGODB_NAME, host=_MONGODB_HOST, port=_MONGODB_PORT,username=_MONGODB_NAME, password= _MONGODB_PASSWD)
+
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
@@ -109,6 +112,43 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers':{
+        'file':{
+            'level': 'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': 'debug.log',
+            'formatter':'verbose',
+            'maxBytes': 1024*1024*5, # 5 MB
+            'backupCount': 5,
+        },
+        'console':{
+            'class':'logging.StreamHandler'
+        }
+    },
+    'loggers':{
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+    },
+}
+
+# Uncomment below to remove logs
+# LOGGING_CONFIG = None
 
 
 # Internationalization
