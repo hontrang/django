@@ -119,7 +119,9 @@ CORS_ORIGIN_WHITELIST = (
     'localhost:8080',
     '127.0.0.1:9000'
 )
-
+STATICFILES_DIRS = (
+   './static',
+)
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 

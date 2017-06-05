@@ -1,6 +1,7 @@
 from rest_framework_mongoengine import viewsets
 from .models import *
 from .serializers import *
+from PIL import Image
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -21,13 +22,13 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     lookup_field = 'id'
 
+
 @api_view(['GET', 'POST'])
-def snippet_list(request,pk):
+def product_list(request):
     """
-    List all snippets, or create a new snippet.
+    List all product, or create a new snippet.
     """
     if request.method == 'GET':
-        print(pk)
         snippets = Products.objects.all()
         serializer = ProductSerializer(snippets, many=True)
         return Response(serializer.data)
@@ -38,3 +39,29 @@ def snippet_list(request,pk):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST','PUT','DELETE'])
+def product_list_by_max(request, pk):
+    """
+    List product, limited by max
+    """
+    if request.method == 'GET':
+        snippets = Products.objects[:int(pk)]
+        # for p in snippets:
+        #     print(p.title)
+        #     print(p.imageUrl)
+        #     image = Image.open(p.imageUrl)
+        #     p.new_file()
+        #     image.show()
+        #     print(image)
+        serializer = ProductSerializer(snippets, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
