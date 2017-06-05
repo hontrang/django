@@ -1,1 +1,0 @@
-@"d:\iot\angular\django\env\scripts\python.exe" "d:\iot\angular\django\env\Scripts\markdown_py" %*
