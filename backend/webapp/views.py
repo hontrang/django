@@ -1,21 +1,49 @@
 from rest_framework_mongoengine import viewsets
-from .models import *
-from .serializers import *
+from .models import Products,Users
+from .serializers import ProductSerializer,UserSerializer
 from PIL import Image
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-# from rest_framework import generics
-# def index(request):
-#     response = HttpResponse()
-#     response.write("<h1>Welcome</h1>")
-#     response.write("This is the polls app")
-#     return response
-#
+
+from .forms import UploadFileForm
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.http import HttpResponse
+from rest_framework.parsers import JSONParser
+import os
+import datetime
+
+@csrf_exempt
+def upload_file(request):
+    print(request)
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(request.FILES['imageUrl'])
+            return JsonResponse({'status': 'false', 'message': '11111111111111111'})
+        else:
+            return HttpResponse(status=400)
+    if request.method == 'GET':
+        _form = '<form action="/upload_file/upload" method="post" enctype="multipart/form-data"> \
+        <label for="file">Your name: </label> \
+        <input id="file" type="file" name="imageUrl" value="hon"> \
+        <input type="submit" value="OK"></form>'
+        html = "<html><body>%s</body></html>" % _form
+        return HttpResponse(html)
+
+def handle_uploaded_file(f):
+    with open('./backend/static/test.txt', 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+
+
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'id'
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = Users.objects.all()
@@ -30,17 +58,20 @@ def product_list(request):
     """
     if request.method == 'GET':
         snippets = Products.objects.all()
-        serializer = ProductSerializer(snippets, many=True)
-        return Response(serializer.data)
+        serializer = SnippetSerializer(snippets, many=True)
+        print(JsonResponse(serializer.data, safe=False))
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            data=serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'POST','PUT','DELETE'])
+
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def product_list_by_max(request, pk):
     """
     List product, limited by max
@@ -63,5 +94,3 @@ def product_list_by_max(request, pk):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    

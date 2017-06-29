@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^api/max/(?P<pk>[0-9]+)$', views.product_list_by_max),#ex:
     url(r'^docs/', schema_view),#ex:
     url(r'^admin/', admin.site.urls),#ex:
+    url(r'^upload_file/', include('webapp.urls')), #ex:
 ]

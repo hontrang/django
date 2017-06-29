@@ -10,5 +10,9 @@
     "python.unitTest.unittestEnabled": false,
     "python.unitTest.promptToConfigure": false,
     "python.unitTest.pyTestEnabled": false,
-    "python.unitTest.nosetestsEnabled": false
+    "python.unitTest.nosetestsEnabled": false,
+    "python.linting.pylintArgs": [
+        "--disable=C0103",
+        "--disable=C0301"
+    ]
 }
