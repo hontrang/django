@@ -1,3 +1,5 @@
+import os
+
 from rest_framework_mongoengine import viewsets
 from .models import Products,Users
 from .serializers import ProductSerializer,UserSerializer
@@ -6,14 +8,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 
-from .forms import UploadFileForm
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.http import HttpResponse
 from rest_framework.parsers import JSONParser
-import os
-import datetime
 
 @csrf_exempt
 def upload_file(request):
@@ -26,9 +25,9 @@ def upload_file(request):
         else:
             return HttpResponse(status=400)
     if request.method == 'GET':
-        _form = '<form action="/upload_file/upload" method="post" enctype="multipart/form-data"> \
+        _form = '<form action="http://localhost:8000/api-authenticated/products/5954af0396279a1d6cb12264/" method="PUT" enctype="multipart/form-data"> \
         <label for="file">Your name: </label> \
-        <input id="file" type="file" name="imageUrl" value="hon"> \
+        <input id="file" type="file" name="imageSource" value="hon"> \
         <input type="submit" value="OK"></form>'
         html = "<html><body>%s</body></html>" % _form
         return HttpResponse(html)
@@ -38,12 +37,10 @@ def handle_uploaded_file(f):
         for chunk in f.chunks():
             destination.write(chunk)
 
-
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'id'
-
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = Users.objects.all()

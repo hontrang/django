@@ -1,9 +1,10 @@
 """
 declare serializers
 """
-
+import time
 from rest_framework_mongoengine import serializers
 from .models import Products, Users
+
 
 
 class ProductSerializer(serializers.DocumentSerializer):
@@ -14,8 +15,8 @@ class ProductSerializer(serializers.DocumentSerializer):
         """
         Create and return a new `Snippet` instance, given the validated data.
         """
-        # print('++++++++++++++++++++++++++++++++++++')
-        # print(validated_data)
+        filesrc = validated_data['imageSource']
+        filename = self.saveFileLocal(filesrc)
         return Products.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
@@ -24,9 +25,24 @@ class ProductSerializer(serializers.DocumentSerializer):
         """
         instance.title = validated_data.get('title', instance.title)
         instance.created = validated_data.get('created', instance.created)
+        instance.imageSource = validated_data.get('imageSource', instance.imageSource)
         instance.imageUrl = validated_data.get('imageUrl', instance.imageUrl)
+        filename = self.saveFileLocal(validated_data['imageSource'])
         instance.save()
         return instance
+    def saveFileLocal(self, source):
+        filesrc = source
+        ch = filesrc.chunks()
+        filename = "%s-%s" %(str(time.time()).replace('.','_'), filesrc.name)
+        with open('./static/test/' + filename, 'w+b') as file:
+            for d in ch:
+                file.write(d)
+            file.close()
+        return filename
+    
+    def deleteExistedLocal(self, source):
+        pass
+
     class Meta:
         """
         TBD

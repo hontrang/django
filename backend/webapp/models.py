@@ -12,7 +12,8 @@ class Products(Document):
     """
     title = StringField(max_length=200,required=True)
     created = DateTimeField(default=datetime.datetime.now,auto_now_add=True)
-    imageUrl = ImageField(size=None,thumbnail_size=None, collection_name='images',required=True);
+    imageSource = ImageField(size=None,thumbnail_size=None, collection_name='images',required=True);
+    imageUrl = StringField(max_length=200,required=False)
 
 class Users(Document):
     """

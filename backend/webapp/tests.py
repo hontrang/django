@@ -16,22 +16,19 @@ class HttpServiceTestCase(TestCase):
         """
         Setting up testcases
         """
-        print('=========== ROOT DIR ============')
+        # print('=========== ROOT DIR ============')
         # show list items in directory
         # print(os.listdir())
         self.client = Client()
 
-        response = self.client.get('http://localhost:8000/upload_file/upload')
-        self.assertEqual(response.status_code, 200)
-
-    def test_post_a_file_to_http(self):
-        """
-        http upload file to api, file is located ".static"
-        """
-        with open('./client_assets/dog.jpg', 'rb') as file:
-            response = self.client.post('http://localhost:8000/upload_file/upload', {
-                                        'title': 'test post', 'imageUrl': file}, format='multipart')
-        self.assertEqual(response.status_code, 200)
+    # def test_post_a_file_to_http(self):
+    #     """
+    #     http upload file to api, file is located ".static"
+    #     """
+    #     with open('./client_assets/dog.jpg', 'rb') as file:
+    #         response = self.client.post('http://localhost:8000/upload_file/upload', {
+    #                                     'title': 'test post', 'imageSource': file}, format='multipart')
+    #     self.assertEqual(response.status_code, 200)
 
     
     def test_upload_file_product(self):
@@ -40,6 +37,24 @@ class HttpServiceTestCase(TestCase):
         """
         with open('./client_assets/dog.jpg', 'rb') as file:
             response = self.client.post('http://localhost:8000/api-authenticated/products/', {
-                                        'title': 'test post', 'imageUrl': file}, format='multipart')
-        print(response)
+                                        'title': 'test post', 'imageSource': file}, format='multipart')
         self.assertEqual(response.status_code, 201)
+    def test_get_list_all_product(self):
+        response = self.client.get('http://localhost:8000/api-authenticated/products/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_file_product_by_id(self):
+        response = self.client.get('http://localhost:8000/api-authenticated/products/5954af0396279a1d6cb12264/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_file_product(self):
+        """
+        test http put to update imageSource field in product
+        """
+        with open('./client_assets/index.jpg', 'rb') as file:
+            response = self.client.put('http://localhost:8000/api-authenticated/products/5954af0396279a1d6cb12264/', {
+                                        'title': 'test post', 'imageSource': file}, format='multipart')
+        self.assertEqual(response.status_code, 201)
+
+    def test_get_file_from_mongodb(self):
+        pass
