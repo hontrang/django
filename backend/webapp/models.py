@@ -5,13 +5,19 @@ import datetime
 from django.db import models
 from mongoengine import *
 
+class Collection(EmbeddedDocument):
+    """
+    included collection info of products
+    """
+    collectionName = StringField(max_length=100)
+    collectionDesc = StringField(max_length=100)
 
 class Products(Document):
     """
     model for product
     """
     title = StringField(max_length=200,required=True)
-    cateID = StringField(max_length=100)
+    collection = ListField(EmbeddedDocumentField(Collection))
     simpleDesc = StringField(max_length=200)
     fullDesc = StringField(max_length=500)
     price = IntField()
@@ -21,6 +27,9 @@ class Products(Document):
     imageSource = ImageField(size=None,thumbnail_size=None, collection_name='images');
     imageUrl = StringField(max_length=200,required=False)
     discount = StringField(max_length=200)
+
+
+
 
 class Users(Document):
     """

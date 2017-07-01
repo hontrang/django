@@ -1,5 +1,5 @@
 import os
-
+import ast
 from rest_framework_mongoengine import viewsets
 from .models import Products, Users
 from .utils import FileHandle
@@ -27,6 +27,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         request.data['imageUrl'] = FileHandle.saveFileLocal(
             self, request.data['imageSource'])
+        request.data['collection'] = ast.literal_eval(request.data['collection'])
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -39,6 +40,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         """
         request.data['imageUrl'] = FileHandle.saveFileLocal(
             self, request.data['imageSource'])
+        request.data['collection'] = ast.literal_eval(request.data['collection'])
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         FileHandle.deleteExistedLocal(self,instance['imageUrl'])
@@ -53,11 +55,15 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
     
+    def perform_create(self, serializer):
+        serializer.save()
+    
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         FileHandle.deleteExistedLocal(self,instance['imageUrl'])
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = Users.objects.all()
@@ -89,7 +95,7 @@ def get_product_collection(request):
     Test distinct in mongoengine, this feature is used to get category name
     """
     if request.method =='GET':
-        snippets = Products.objects.distinct('title')
+        snippets = Products.objects.distinct('collection.collectionName')
         print(JsonResponse(snippets, safe=False))
         return Response(snippets, status=status.HTTP_200_OK)
 
