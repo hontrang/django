@@ -29,6 +29,5 @@ class UserSerializer(serializers.DocumentSerializer):
         TBD
         """
         model = Users
-        fields = ('id', 'username', 'password', 'displayname',
-                  'firstName', 'lastname', 'avatar', 'email', 'created', 'level')
+        fields = '__all__'
 

@@ -12,7 +12,9 @@ SET ROOT=backend
 CALL %ENV_ACTIVE_SCRIPT%
 TIMEOUT %SLEEP_TIME%
 ECHO %CD%
-python %ROOT%/manage.py test webapp
+CD %ROOT%
+python manage.py test webapp
+CD ..
 PAUSE
 
 

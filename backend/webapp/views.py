@@ -16,31 +16,6 @@ from django.http import HttpResponse
 from rest_framework.parsers import JSONParser
 
 
-@csrf_exempt
-def upload_file(request):
-    print(request)
-    if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            handle_uploaded_file(request.FILES['imageUrl'])
-            return JsonResponse({'status': 'false', 'message': '11111111111111111'})
-        else:
-            return HttpResponse(status=400)
-    if request.method == 'GET':
-        _form = '<form action="http://localhost:8000/api-authenticated/products/5954af0396279a1d6cb12264/" method="PUT" enctype="multipart/form-data"> \
-        <label for="file">Your name: </label> \
-        <input id="file" type="file" name="imageSource" value="hon"> \
-        <input type="submit" value="OK"></form>'
-        html = "<html><body>%s</body></html>" % _form
-        return HttpResponse(html)
-
-
-def handle_uploaded_file(f):
-    with open('./backend/static/test.txt', 'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
-
-
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
@@ -97,7 +72,7 @@ def product_list(request):
     """
     if request.method == 'GET':
         snippets = Products.objects.all()
-        serializer = SnippetSerializer(snippets, many=True)
+        serializer = ProductSerializer(snippets, many=True)
         print(JsonResponse(serializer.data, safe=False))
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -108,7 +83,15 @@ def product_list(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+@api_view(['GET'])
+def get_product_collection(request):
+    """
+    Test distinct in mongoengine, this feature is used to get category name
+    """
+    if request.method =='GET':
+        snippets = Products.objects.distinct('title')
+        print(JsonResponse(snippets, safe=False))
+        return Response(snippets, status=status.HTTP_200_OK)
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def product_list_by_max(request, pk):
@@ -117,13 +100,6 @@ def product_list_by_max(request, pk):
     """
     if request.method == 'GET':
         snippets = Products.objects[:int(pk)]
-        # for p in snippets:
-        #     print(p.title)
-        #     print(p.imageUrl)
-        #     image = Image.open(p.imageUrl)
-        #     p.new_file()
-        #     image.show()
-        #     print(image)
         serializer = ProductSerializer(snippets, many=True)
         return Response(serializer.data)
 

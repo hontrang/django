@@ -19,5 +19,6 @@ app_name = 'upload'
 urlpatterns = [
     url(r'^api/', include(router.urls, namespace='api')),#ex:
     url(r'^api/max/(?P<pk>[0-9]+)$', views.product_list_by_max),#ex:
+    url(r'^api/collection/$', views.get_product_collection),#ex:
     url(r'^docs/', schema_view),#ex:
 ]

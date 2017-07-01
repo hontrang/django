@@ -11,9 +11,16 @@ class Products(Document):
     model for product
     """
     title = StringField(max_length=200,required=True)
+    cateID = StringField(max_length=100)
+    simpleDesc = StringField(max_length=200)
+    fullDesc = StringField(max_length=500)
+    price = IntField()
+    views = IntField()
+    favorite = IntField()
     created = DateTimeField(default=datetime.datetime.now,auto_now_add=True)
-    imageSource = ImageField(size=None,thumbnail_size=None, collection_name='images',required=True);
+    imageSource = ImageField(size=None,thumbnail_size=None, collection_name='images');
     imageUrl = StringField(max_length=200,required=False)
+    discount = StringField(max_length=200)
 
 class Users(Document):
     """
@@ -29,4 +36,3 @@ class Users(Document):
     created = DateTimeField(default=datetime.datetime.now,auto_now_add=True)
     level = IntField(min_value=1, max_value=5, default = 1)
 # Create your models here.
-
