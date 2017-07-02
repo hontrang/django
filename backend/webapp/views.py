@@ -1,5 +1,6 @@
 import ast
 import os
+import time
 
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -27,7 +28,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         request.data['imageUrl'] = FileHandle.saveFileLocal(
             self, request.data['imageSource'])
-        request.data['collection'] = ast.literal_eval(request.data['collection'])
+        request.data['collection'] = ast.literal_eval(
+            request.data['collection'])
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -40,11 +42,13 @@ class ProductViewSet(viewsets.ModelViewSet):
         """
         request.data['imageUrl'] = FileHandle.saveFileLocal(
             self, request.data['imageSource'])
-        request.data['collection'] = ast.literal_eval(request.data['collection'])
+        request.data['collection'] = ast.literal_eval(
+            request.data['collection'])
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        FileHandle.deleteExistedLocal(self,instance['imageUrl'])
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        FileHandle.deleteExistedLocal(self, instance['imageUrl'])
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
@@ -54,13 +58,13 @@ class ProductViewSet(viewsets.ModelViewSet):
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
-    
+
     def perform_create(self, serializer):
         serializer.save()
-    
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        FileHandle.deleteExistedLocal(self,instance['imageUrl'])
+        FileHandle.deleteExistedLocal(self, instance['imageUrl'])
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -85,19 +89,31 @@ def product_list(request):
     elif request.method == 'POST':
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
-            data=serializer.save()
+            data = serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET'])
 def get_product_collection(request):
     """
     Test distinct in mongoengine, this feature is used to get category name
     """
-    if request.method =='GET':
+    if request.method == 'GET':
         snippets = Products.objects.distinct('collection.collectionName')
-        print(JsonResponse(snippets, safe=False))
         return Response(snippets, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_image_from_id(request, id):
+    """
+    method to get file from Gridfs then return to client
+    """
+    if request.method == 'GET':
+        snippets = Products.objects.get(id=id)
+        ch = snippets['imageSource'].readchunk()
+        return HttpResponse(ch, content_type="image/jpeg")
+
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def product_list_by_max(request, pk):

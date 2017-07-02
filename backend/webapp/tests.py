@@ -34,39 +34,39 @@ class HttpServiceTestCase(TestCase):
     #                                     'title': 'test post', 'imageSource': file}, format='multipart')
     #     self.assertEqual(response.status_code, 200)
 
-    def test_upload_file_product_then_delete_immediately(self):
-        """
-        test http post file product serializer
-        """
-        with open('./client_assets/dog.jpg', 'rb') as file:
-            coll = json.dumps({
-                "collectionName": "Apple %d" % randint(0, 9),
-                "collectionDesc": "Apple desc %s" % (randint(0, 9))
-            })
-            response = self.client.post('http://localhost:8000/webapp/api/products/', {
-                                        'title': 'test post', 'imageSource': file, 'collection': coll}, format='multipart')
-        print(response.data)
-        postID = response.data['id']
-        self.assertEqual(response.status_code, 201)
-        with open('./client_assets/index.jpg', 'rb') as file:
-            response = self.client.delete(
-                'http://localhost:8000/webapp/api/products/%s/' % postID)
-            print(response.data)
-            self.assertEqual(response.status_code, 204)
+    # def test_upload_file_product_then_delete_immediately(self):
+    #     """
+    #     test http post file product serializer
+    #     """
+    #     with open('./client_assets/dog.jpg', 'rb') as file:
+    #         coll = json.dumps({
+    #             "collectionName": "Apple %d" % randint(0, 9),
+    #             "collectionDesc": "Apple desc %s" % (randint(0, 9))
+    #         })
+    #         response = self.client.post('http://localhost:8000/webapp/api/products/', {
+    #                                     'title': 'test post', 'imageSource': file, 'collection': coll}, format='multipart')
+    #     print(response.data)
+    #     postID = response.data['id']
+    #     self.assertEqual(response.status_code, 201)
+    #     with open('./client_assets/index.jpg', 'rb') as file:
+    #         response = self.client.delete(
+    #             'http://localhost:8000/webapp/api/products/%s/' % postID)
+    #         print(response.data)
+    #         self.assertEqual(response.status_code, 204)
 
-    def test_upload_20_products(self):
-        """
-        test to upload 20 products in a short time
-        """
-        for index in range(0, 20):
-            with open('./client_assets/dog.jpg', 'rb') as file:
-                coll = json.dumps({
-                    "collectionName": "Apple %d" % randint(0, 9),
-                    "collectionDesc": "Apple desc %s" % (randint(0, 9))
-                })
-                response = self.client.post('http://localhost:8000/webapp/api/products/', {
-                                            'title': 'test post 1', 'imageSource': file, 'collection': coll}, format='multipart')
-            self.assertEqual(response.status_code, 201)
+    # def test_upload_20_products(self):
+    #     """
+    #     test to upload 20 products in a short time
+    #     """
+    #     for index in range(0, 20):
+    #         with open('./client_assets/dog.jpg', 'rb') as file:
+    #             coll = json.dumps({
+    #                 "collectionName": "Apple %d" % randint(0, 9),
+    #                 "collectionDesc": "Apple desc %s" % (randint(0, 9))
+    #             })
+    #             response = self.client.post('http://localhost:8000/webapp/api/products/', {
+    #                                         'title': 'test post 1', 'imageSource': file, 'collection': coll}, format='multipart')
+    #         self.assertEqual(response.status_code, 201)
     # def test_get_list_all_product(self):
     #     response = self.client.get('http://localhost:8000/webapp/api/products/')
     #     self.assertEqual(response.status_code, 200)
@@ -84,13 +84,14 @@ class HttpServiceTestCase(TestCase):
     #                                     'title': 'test post', 'imageSource': file}, format='multipart')
         # self.assertEqual(response.status_code, 201)
 
-    # def test_get_file_from_mongodb(self):
-    #     pass
-
-    def test_get_collection_name(self):
-        """
-        get list collection product by distinct method mongoengine
-        """
+    def test_get_file_from_mongodb(self):
         response = self.client.get(
             'http://localhost:8000/webapp/api/collection/')
-        self.assertEqual(response.status_code, 200)
+
+    # def test_get_collection_name(self):
+    #     """
+    #     get list collection product by distinct method mongoengine
+    #     """
+    #     response = self.client.get(
+    #         'http://localhost:8000/webapp/api/collection/')
+    #     self.assertEqual(response.status_code, 200)

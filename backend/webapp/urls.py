@@ -20,5 +20,6 @@ urlpatterns = [
     url(r'^api/', include(router.urls, namespace='api')),#ex:
     url(r'^api/max/(?P<pk>[0-9]+)$', views.product_list_by_max),#ex:
     url(r'^api/collection/$', views.get_product_collection),#ex:
+    url(r'^api/static-image/(?P<id>[^/.]+)/$', views.get_image_from_id),#ex:
     url(r'^docs/', schema_view),#ex:
 ]
