@@ -1,19 +1,19 @@
-import os
 import ast
-from rest_framework_mongoengine import viewsets
-from .models import Products, Users
-from .utils import FileHandle
-from .serializers import ProductSerializer, UserSerializer
+import os
+
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from PIL import Image
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from django.http import HttpResponse
 from rest_framework.parsers import JSONParser
+from rest_framework.response import Response
+from rest_framework_mongoengine import viewsets
+
+from .models import Products, Users
+from .serializers import ProductSerializer, UserSerializer
+from .utils import FileHandle
 
 
 class ProductViewSet(viewsets.ModelViewSet):

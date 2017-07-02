@@ -2,8 +2,10 @@
 declare models
 """
 import datetime
+
 from django.db import models
 from mongoengine import *
+
 
 class Collection(EmbeddedDocument):
     """

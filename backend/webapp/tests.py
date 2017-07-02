@@ -1,11 +1,13 @@
 """
 declare simple testcase, only http test still now
 """
-# import os
-from django.test import TestCase
-from django.test import Client
-from random import randint
 import json
+from random import randint
+
+# import os
+from django.test import Client, TestCase
+
+
 # Create your tests here.
 
 
@@ -38,7 +40,7 @@ class HttpServiceTestCase(TestCase):
         """
         with open('./client_assets/dog.jpg', 'rb') as file:
             coll = json.dumps({
-                "collectionName": "Apple %d" % randint(0,9),
+                "collectionName": "Apple %d" % randint(0, 9),
                 "collectionDesc": "Apple desc %s" % (randint(0, 9))
             })
             response = self.client.post('http://localhost:8000/webapp/api/products/', {
@@ -59,7 +61,7 @@ class HttpServiceTestCase(TestCase):
         for index in range(0, 20):
             with open('./client_assets/dog.jpg', 'rb') as file:
                 coll = json.dumps({
-                    "collectionName": "Apple %d" % randint(0,9),
+                    "collectionName": "Apple %d" % randint(0, 9),
                     "collectionDesc": "Apple desc %s" % (randint(0, 9))
                 })
                 response = self.client.post('http://localhost:8000/webapp/api/products/', {
@@ -86,5 +88,9 @@ class HttpServiceTestCase(TestCase):
     #     pass
 
     def test_get_collection_name(self):
-        response = self.client.get('http://localhost:8000/webapp/api/collection/')
+        """
+        get list collection product by distinct method mongoengine
+        """
+        response = self.client.get(
+            'http://localhost:8000/webapp/api/collection/')
         self.assertEqual(response.status_code, 200)
