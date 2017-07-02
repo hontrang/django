@@ -26,8 +26,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     """
 
     def create(self, request, *args, **kwargs):
-        request.data['imageUrl'] = FileHandle.saveFileLocal(
-            self, request.data['imageSource'])
+        # request.data['imageUrl'] = FileHandle.saveFileLocal(
+        #     self, request.data['imageSource'])
         request.data['collection'] = ast.literal_eval(
             request.data['collection'])
         serializer = self.get_serializer(data=request.data)
@@ -40,13 +40,13 @@ class ProductViewSet(viewsets.ModelViewSet):
         """
         Update a model instance.
         """
-        request.data['imageUrl'] = FileHandle.saveFileLocal(
-            self, request.data['imageSource'])
+        # request.data['imageUrl'] = FileHandle.saveFileLocal(
+        #     self, request.data['imageSource'])
         request.data['collection'] = ast.literal_eval(
             request.data['collection'])
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        FileHandle.deleteExistedLocal(self, instance['imageUrl'])
+        # FileHandle.deleteExistedLocal(self, instance['imageUrl'])
         serializer = self.get_serializer(
             instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
@@ -64,7 +64,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        FileHandle.deleteExistedLocal(self, instance['imageUrl'])
+        # FileHandle.deleteExistedLocal(self, instance['imageUrl'])
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 

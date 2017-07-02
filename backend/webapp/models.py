@@ -27,7 +27,7 @@ class Products(Document):
     favorite = IntField()
     created = DateTimeField(default=datetime.datetime.now,auto_now_add=True)
     imageSource = ImageField(size=None,thumbnail_size=None, collection_name='images');
-    imageUrl = StringField(max_length=200,required=False)
+    # imageUrl = StringField(max_length=200,required=False)
     discount = StringField(max_length=200)
 
 

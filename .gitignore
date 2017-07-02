@@ -2,3 +2,4 @@
 /backend/webapp/__pycache__
 /env
 /backend/static
+/backend/**/__pycache__
