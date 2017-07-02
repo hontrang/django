@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from PIL import Image
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, detail_route, list_route
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework_mongoengine import viewsets
@@ -68,6 +68,80 @@ class ProductViewSet(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @list_route(methods=['GET'])
+    def collection(self, request, *args, **kwargs):
+        """
+        Test distinct in mongoengine, this feature is used to get category name
+        """
+        snippets = Products.objects.distinct('collection.collectionName')
+        return Response(snippets, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['GET'])
+    def image(self, request, id=None, *args, **kwargs):
+        snippets = Products.objects.get(id=id)
+        ch = snippets['imageSource'].readchunk()
+        return HttpResponse(ch, content_type="image/jpeg")
+
+    @detail_route(methods=['GET'])
+    def limit(self, request, max=10, *args, **kwargs):
+        print(request.path)
+        print(max)
+        snippets = Products.objects[:int(max)]
+        serializer = ProductSerializer(snippets, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @list_route(methods=['GET'])
+    def top_view(self, request, *args, **kwargs):
+        """
+        Method to get top viewed product, size = 10 products
+        """
+        if request.method == 'GET':
+            snippets = Products.objects[:int(10)].order_by('-views')
+            serializer = ProductSerializer(snippets, many=True)
+            return Response(serializer.data)
+
+    @list_route(methods=['GET'])
+    def top_favorite(self, request, *args, **kwargs):
+        """
+        Method to get top viewed product, size = 10 products
+        """
+        snippets = Products.objects[:int(10)].order_by('-favorite')
+        serializer = ProductSerializer(snippets, many=True)
+        return Response(serializer.data)
+
+    @list_route(methods=['GET'])
+    def top_price(self, request, *args, **kwargs):
+        """
+        Method to get top viewed product, size = 10 products
+        """
+        snippets = Products.objects[:int(10)].order_by('-price')
+        serializer = ProductSerializer(snippets, many=True)
+        return Response(serializer.data)
+
+    @list_route(methods=['GET'])
+    def newest(self, request, *args, **kwargs):
+        """
+        Method to get top viewed product, size = 10 products
+        """
+        snippets = Products.objects[:int(10)].order_by('-created')
+        serializer = ProductSerializer(snippets, many=True)
+        return Response(serializer.data)
+
+    @detail_route(methods=['PUT'])
+    def favoriteup(self, request, *args, **kwargs):
+        """
+        Method to add 1 to favorite
+        """
+        # instance = self.get_object()
+        # instance['favorite'] += request.data.get("fa")
+        # instance.save()
+
+        # serializer = self.get_serializer(instance)
+        # serializer.is_valid(raise_exception=True)
+        # self.perform_update(serializer)
+
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = Users.objects.all()
@@ -83,7 +157,6 @@ def product_list(request):
     if request.method == 'GET':
         snippets = Products.objects.all()
         serializer = ProductSerializer(snippets, many=True)
-        print(JsonResponse(serializer.data, safe=False))
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
@@ -95,33 +168,22 @@ def product_list(request):
 
 
 @api_view(['GET'])
-def get_product_collection(request):
-    """
-    Test distinct in mongoengine, this feature is used to get category name
-    """
-    if request.method == 'GET':
-        snippets = Products.objects.distinct('collection.collectionName')
-        return Response(snippets, status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
 def get_image_from_id(request, id):
     """
     method to get file from Gridfs then return to client
     """
-    if request.method == 'GET':
-        snippets = Products.objects.get(id=id)
-        ch = snippets['imageSource'].readchunk()
-        return HttpResponse(ch, content_type="image/jpeg")
+    snippets = Products.objects.get(id=id)
+    ch = snippets['imageSource'].readchunk()
+    return HttpResponse(ch, content_type="image/jpeg")
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
-def product_list_by_max(request, pk):
+def product_list_by_max(request, max, *args, **kwargs):
     """
     List product, limited by max
     """
     if request.method == 'GET':
-        snippets = Products.objects[:int(pk)]
+        snippets = Products.objects[:int(max)]
         serializer = ProductSerializer(snippets, many=True)
         return Response(serializer.data)
 

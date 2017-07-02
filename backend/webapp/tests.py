@@ -2,7 +2,7 @@
 declare simple testcase, only http test still now
 """
 import json
-from random import randint
+from random import randint, randrange
 
 # import os
 from django.test import Client, TestCase
@@ -59,6 +59,10 @@ class HttpServiceTestCase(TestCase):
             response = self.client.get(
                 'http://localhost:8000/webapp/api/static-image/%s/' % postID)
             self.assertEqual(response.status_code, 200)
+            # Test get imageSource from Product viewSet
+            response = self.client.get(
+                'http://localhost:8000/webapp/api/products/%s/image/' % postID)
+            self.assertEqual(response.status_code, 200)
             # Test delete product uploaded
             response = self.client.delete(
                 'http://localhost:8000/webapp/api/products/%s/' % postID)
@@ -74,8 +78,11 @@ class HttpServiceTestCase(TestCase):
                     "collectionName": "Apple %d" % randint(0, 9),
                     "collectionDesc": "Apple desc %s" % (randint(0, 9))
                 })
+                views = randint(0, 10000)
+                favorite = randint(0, 10000)
+                price = randrange(10000, 1000000, 1000)
                 response = self.client.post('http://localhost:8000/webapp/api/products/', {
-                                            'title': 'test post 1', 'imageSource': file, 'collection': coll}, format='multipart')
+                                            'title': 'test post 1', 'imageSource': file, 'collection': coll, 'views': views, 'favorite': favorite, 'price': price}, format='multipart')
             self.assertEqual(response.status_code, 201)
 
     def test_get_list_all_product(self):
@@ -86,11 +93,12 @@ class HttpServiceTestCase(TestCase):
     def test_get_file_from_mongodb(self):
         response = self.client.get(
             'http://localhost:8000/webapp/api/collection/')
+        self.assertEqual(response.status_code, 200)
 
     def test_get_collection_name(self):
         """
         get list collection product by distinct method mongoengine
         """
         response = self.client.get(
-            'http://localhost:8000/webapp/api/collection/')
+            'http://localhost:8000/webapp/api/products/collection/')
         self.assertEqual(response.status_code, 200)
