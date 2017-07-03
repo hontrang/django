@@ -5,13 +5,14 @@ import json
 from random import randint, randrange
 
 # import os
-from django.test import Client, TestCase
+from django.test import Client
+import unittest
 
 
 # Create your tests here.
 
 
-class HttpServiceTestCase(TestCase):
+class HttpServiceTestCase(unittest.TestCase):
     """
     Testcases to validate http service usage
     """

@@ -138,6 +138,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         _like += 1
         snippets = Products.objects.update(like=_like)
         return Response(status=status.HTTP_201_CREATED)
+
     @detail_route(methods=['PUT'])
     def likedown(self, request, *args, **kwargs):
         """
@@ -148,6 +149,15 @@ class ProductViewSet(viewsets.ModelViewSet):
         _like -= 1
         snippets = Products.objects.update(like=_like)
         return Response(status=status.HTTP_201_CREATED)
+
+    @detail_route(methods=['GET'])
+    def price(self, request, id, *args, **kwargs):
+        """
+        Method to minus 1 to like
+        """
+        snippets = Products.objects.get(id=id)
+        ch = snippets['price']
+        return Response(ch, status=status.HTTP_201_CREATED)
 
 
 class UserViewSet(viewsets.ModelViewSet):

@@ -13,7 +13,9 @@ CALL %ENV_ACTIVE_SCRIPT%
 TIMEOUT %SLEEP_TIME%
 ECHO %CD%
 CD %ROOT%
-python manage.py test webapp
+REM python manage.py test webapp
+pytest -v
+
 CD ..
 PAUSE
 
