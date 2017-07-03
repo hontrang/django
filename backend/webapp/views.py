@@ -42,6 +42,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         """
         # request.data['imageUrl'] = FileHandle.saveFileLocal(
         #     self, request.data['imageSource'])
+        print(request.data['collection'])
         request.data['collection'] = ast.literal_eval(
             request.data['collection'])
         partial = kwargs.pop('partial', False)

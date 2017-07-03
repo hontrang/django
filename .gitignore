@@ -3,3 +3,4 @@
 /env
 /backend/static
 /backend/**/__pycache__
+/env/**/__pycache__

@@ -24,6 +24,14 @@ class HttpServiceTestCase(TestCase):
         # show list items in directory
         # print(os.listdir())
         self.client = Client()
+        BOUNDARY = 'BoUnDaRyStRiNg'
+        self.MULTIPART_CONTENT = 'multipart/form-data; boundary=%s' % BOUNDARY
+
+    def tearDown(self):
+        """
+        Cleanup testcases when complete
+        """
+        del self.client
 
     def test_post_a_file_to_http(self):
         """
@@ -35,7 +43,7 @@ class HttpServiceTestCase(TestCase):
                 "collectionDesc": "Apple desc %s" % (randint(0, 9))
             })
             response = self.client.post('http://localhost:8000/webapp/api/products/', {
-                                        'title': 'test post', 'imageSource': file, 'collection': coll}, format='multipart')
+                                        'title': 'test post', 'imageSource': file, 'collection': coll})
         self.assertEqual(response.status_code, 201)
 
     def test_upload_file_product_then_delete_immediately(self):
@@ -48,7 +56,7 @@ class HttpServiceTestCase(TestCase):
                 "collectionDesc": "Apple desc %s" % (randint(0, 9))
             })
             response = self.client.post('http://localhost:8000/webapp/api/products/', {
-                                        'title': 'test post', 'imageSource': file, 'collection': coll}, format='multipart')
+                                        'title': 'test post', 'imageSource': file, 'collection': coll})
             postID = response.data['id']
             self.assertEqual(response.status_code, 201)
             # Test get product details uploaded
@@ -63,6 +71,10 @@ class HttpServiceTestCase(TestCase):
             response = self.client.get(
                 'http://localhost:8000/webapp/api/products/%s/image/' % postID)
             self.assertEqual(response.status_code, 200)
+            # Test update field title product
+            # response = self.client.put('http://localhost:8000/webapp/api/products/%s/' % postID, {
+            #     'title': 'test put put', 'imageSource': file, 'collection': coll}, content_type=self.MULTIPART_CONTENT, format='multipart')
+            # self.assertEqual(response.status_code, 200)
             # Test delete product uploaded
             response = self.client.delete(
                 'http://localhost:8000/webapp/api/products/%s/' % postID)
