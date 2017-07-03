@@ -128,19 +128,25 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @detail_route(methods=['PUT'])
-    def favoriteup(self, request, *args, **kwargs):
+    def likeup(self, request, *args, **kwargs):
         """
-        Method to add 1 to favorite
+        Method to add 1 to like
         """
-        # instance = self.get_object()
-        # instance['favorite'] += request.data.get("fa")
-        # instance.save()
-
-        # serializer = self.get_serializer(instance)
-        # serializer.is_valid(raise_exception=True)
-        # self.perform_update(serializer)
-
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        instance = self.get_object()
+        _like = instance['like']
+        _like += 1
+        snippets = Products.objects.update(like=_like)
+        return Response(status=status.HTTP_201_CREATED)
+    @detail_route(methods=['PUT'])
+    def likedown(self, request, *args, **kwargs):
+        """
+        Method to minus 1 to like
+        """
+        instance = self.get_object()
+        _like = instance['like']
+        _like -= 1
+        snippets = Products.objects.update(like=_like)
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class UserViewSet(viewsets.ModelViewSet):

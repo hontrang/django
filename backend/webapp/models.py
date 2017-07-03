@@ -25,7 +25,7 @@ class Products(Document):
     fullDesc = StringField(max_length=500, default="To be updated")
     price = IntField(default=0)
     views = IntField(default=0)
-    favorite = IntField(default=0)
+    like = IntField(default=0)
     created = DateTimeField(default=datetime.datetime.now, auto_now_add=True)
     imageSource = ImageField(
         size=None, thumbnail_size=None, collection_name='images')

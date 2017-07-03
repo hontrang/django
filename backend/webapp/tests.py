@@ -79,10 +79,10 @@ class HttpServiceTestCase(TestCase):
                     "collectionDesc": "Apple desc %s" % (randint(0, 9))
                 })
                 views = randint(0, 10000)
-                favorite = randint(0, 10000)
+                like = randint(0, 10000)
                 price = randrange(10000, 1000000, 1000)
                 response = self.client.post('http://localhost:8000/webapp/api/products/', {
-                                            'title': 'test post 1', 'imageSource': file, 'collection': coll, 'views': views, 'favorite': favorite, 'price': price}, format='multipart')
+                                            'title': 'test post 1', 'imageSource': file, 'collection': coll, 'views': views, 'like': like, 'price': price}, format='multipart')
             self.assertEqual(response.status_code, 201)
 
     def test_get_list_all_product(self):
@@ -92,7 +92,7 @@ class HttpServiceTestCase(TestCase):
 
     def test_get_file_from_mongodb(self):
         response = self.client.get(
-            'http://localhost:8000/webapp/api/collection/')
+            'http://localhost:8000/webapp/api/products/collection/')
         self.assertEqual(response.status_code, 200)
 
     def test_get_collection_name(self):
