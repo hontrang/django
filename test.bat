@@ -11,10 +11,10 @@ SET ROOT=backend
 :: MAIN SCRIPT
 CALL %ENV_ACTIVE_SCRIPT%
 TIMEOUT %SLEEP_TIME%
-ECHO %CD%
+ECHO %DIR%
 CD %ROOT%
 REM python manage.py test webapp
-pytest -v
+pytest -v --junitxml=report.xml
 
 CD ..
 PAUSE

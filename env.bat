@@ -5,15 +5,19 @@ TITLE This script to setup env
 :: CONFIGURATIONS
 
 SET ENV_ACTIVE_SCRIPT=env\scripts\activate
-SET SLEEP_TIME=2
+SET SLEEP_TIME=5
 SET ROOT=backend
 
 :: MAIN SCRIPT
 pip install virtualenv
 pip install virtualenvwrapper-win
 virtualenv env
-call %ENV_ACTIVE_SCRIPT%
-TIMEOUT %SLEEP_TIME%
+
+REM COMMENT OUT CODE TO INSTALL PACKAGE GLOBALLY
+REM CALL %ENV_ACTIVE_SCRIPT%
+REM TIMEOUT %SLEEP_TIME%
+REM COMMENT OUT CODE TO INSTALL PACKAGE GLOBALLY
+
 pip install Django
 pip install mongoengine
 pip install djangorestframework
@@ -23,7 +27,9 @@ pip install django-rest-framework-mongoengine
 pip install django-rest-swagger
 pip install django-cors-headers
 pip install pillow
-pip install pytest
+pip install -U pytest
+pip install pytest-django
+pip install pytest-cov
 
 CD %ROOT%
 ECHO %CD%
