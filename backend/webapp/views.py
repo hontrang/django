@@ -203,10 +203,3 @@ def product_list_by_max(request, max, *args, **kwargs):
         snippets = Products.objects[:int(max)]
         serializer = ProductSerializer(snippets, many=True)
         return Response(serializer.data)
-
-    elif request.method == 'POST':
-        serializer = ProductSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

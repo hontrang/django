@@ -23,6 +23,7 @@ pip install django-rest-framework-mongoengine
 pip install django-rest-swagger
 pip install django-cors-headers
 pip install pillow
+pip install pytest
 
 CD %ROOT%
 ECHO %CD%
