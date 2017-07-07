@@ -1,3 +1,3 @@
 {
-  "webapp/tests.py::HttpServiceTestCase::test_post_a_file_to_http": true
+  "webapp/tests.py::HttpServiceTestCase::test_upload_file_product_then_delete_immediately": true
 }

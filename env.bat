@@ -14,8 +14,8 @@ pip install virtualenvwrapper-win
 virtualenv env
 
 REM COMMENT OUT CODE TO INSTALL PACKAGE GLOBALLY
-REM CALL %ENV_ACTIVE_SCRIPT%
-REM TIMEOUT %SLEEP_TIME%
+CALL %ENV_ACTIVE_SCRIPT%
+TIMEOUT %SLEEP_TIME%
 REM COMMENT OUT CODE TO INSTALL PACKAGE GLOBALLY
 
 pip install Django
@@ -30,6 +30,7 @@ pip install pillow
 pip install -U pytest
 pip install pytest-django
 pip install pytest-cov
+pip install coverage
 
 CD %ROOT%
 ECHO %CD%

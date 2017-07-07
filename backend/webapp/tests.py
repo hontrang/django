@@ -2,11 +2,12 @@
 declare simple testcase, only http test still now
 """
 import json
+import time
+import unittest
 from random import randint, randrange
 
-# import os
-from django.test import Client
-import unittest
+from rest_framework.test import APIClient
+
 
 
 # Create your tests here.
@@ -14,7 +15,7 @@ import unittest
 
 class HttpServiceTestCase(unittest.TestCase):
     """
-    Testcases to validate http service usage
+    Testcases to validate http service usage, use rest framework api test
     """
 
     def setUp(self):
@@ -24,9 +25,8 @@ class HttpServiceTestCase(unittest.TestCase):
         # print('=========== ROOT DIR ============')
         # show list items in directory
         # print(os.listdir())
-        self.client = Client()
-        BOUNDARY = 'BoUnDaRyStRiNg'
-        self.MULTIPART_CONTENT = 'multipart/form-data; boundary=%s' % BOUNDARY
+        self.client = APIClient()
+
 
     def tearDown(self):
         """
@@ -44,8 +44,8 @@ class HttpServiceTestCase(unittest.TestCase):
                 "collectionDesc": "Apple desc %s" % (randint(0, 9))
             })
             response = self.client.post('http://localhost:8000/webapp/api/products/', {
-                                        'title': 'test post', 'imageSource': file, 'collection': coll})
-        self.assertEqual(response.status_code, 201)
+                                        'title': 'test post', 'imageSource': file, 'collection': coll}, format='multipart')
+            self.assertEqual(response.status_code, 201)
 
     def test_upload_file_product_then_delete_immediately(self):
         """
@@ -57,25 +57,21 @@ class HttpServiceTestCase(unittest.TestCase):
                 "collectionDesc": "Apple desc %s" % (randint(0, 9))
             })
             response = self.client.post('http://localhost:8000/webapp/api/products/', {
-                                        'title': 'test post', 'imageSource': file, 'collection': coll})
+                                        'title': 'test post', 'imageSource': file, 'collection': coll},format='multipart')
             postID = response.data['id']
             self.assertEqual(response.status_code, 201)
             # Test get product details uploaded
             response = self.client.get(
                 'http://localhost:8000/webapp/api/products/%s/' % postID)
             self.assertEqual(response.status_code, 200)
-            # Test get imageSource field upLoaded
-            response = self.client.get(
-                'http://localhost:8000/webapp/api/static-image/%s/' % postID)
-            self.assertEqual(response.status_code, 200)
             # Test get imageSource from Product viewSet
             response = self.client.get(
                 'http://localhost:8000/webapp/api/products/%s/image/' % postID)
             self.assertEqual(response.status_code, 200)
-            # Test update field title product
-            # response = self.client.put('http://localhost:8000/webapp/api/products/%s/' % postID, {
-            #     'title': 'test put put', 'imageSource': file, 'collection': coll}, content_type=self.MULTIPART_CONTENT, format='multipart')
-            # self.assertEqual(response.status_code, 200)
+            # Test update field title product - use patch to update partial, put to update body
+            newfile = open('./client_assets/index.jpg','rb')
+            response = self.client.patch('http://localhost:8000/webapp/api/products/%s/' % postID, {'imageSource': newfile}, format='multipart')
+            self.assertEqual(response.status_code, 200)
             # Test delete product uploaded
             response = self.client.delete(
                 'http://localhost:8000/webapp/api/products/%s/' % postID)

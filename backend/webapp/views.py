@@ -28,8 +28,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         # request.data['imageUrl'] = FileHandle.saveFileLocal(
         #     self, request.data['imageSource'])
-        request.data['collection'] = ast.literal_eval(
-            request.data['collection'])
+        if request.data['collection']:
+            request.data['collection'] = ast.literal_eval(request.data['collection'])
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -42,14 +42,10 @@ class ProductViewSet(viewsets.ModelViewSet):
         """
         # request.data['imageUrl'] = FileHandle.saveFileLocal(
         #     self, request.data['imageSource'])
-        print(request.data['collection'])
-        request.data['collection'] = ast.literal_eval(
-            request.data['collection'])
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         # FileHandle.deleteExistedLocal(self, instance['imageUrl'])
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
