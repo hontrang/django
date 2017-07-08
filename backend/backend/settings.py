@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_mongoengine',
     'rest_framework_swagger',
-    'webapp'
+    'webapp',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -54,6 +55,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+]
+
+FILE_UPLOAD_HANDLERS = [
+    'django.core.files.uploadhandler.MemoryFileUploadHandler',
+    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -93,8 +101,8 @@ _MONGODB_HOST = '127.0.0.1'
 _MONGODB_NAME = 'django'
 _MONGODB_PORT = 27017
 
-connect(db=_MONGODB_NAME, host=_MONGODB_HOST, port=_MONGODB_PORT,username=_MONGODB_NAME, password= _MONGODB_PASSWD)
-
+connect(db=_MONGODB_NAME, host=_MONGODB_HOST, port=_MONGODB_PORT,
+        username=_MONGODB_NAME, password=_MONGODB_PASSWD)
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
@@ -151,6 +159,17 @@ LOGGING = {
 # LOGGING_CONFIG = None
 
 
+# Cross domain
+CORS_ORIGIN_WHITELIST = (
+    'google.com',
+    'hostname.example.com',
+    'localhost:8080',
+    '127.0.0.1:9000',
+    '*'
+)
+STATICFILES_DIRS = STATICFILES_DIRS = [
+    './static',
+]
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
@@ -169,3 +188,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+REST_FRAMEWORK = {
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+}

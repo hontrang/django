@@ -1,20 +1,56 @@
-from django.db import models
-from mongoengine import *
+"""
+declare models
+"""
 import datetime
 
+from django.db import models
+from mongoengine import *
+
+
+class Collection(EmbeddedDocument):
+    """
+    included collection info of products
+    """
+    collectionName = StringField(max_length=100)
+    collectionDesc = StringField(max_length=100)
+
+
 class Products(Document):
-    title = StringField(max_length=200)
-    created = DateTimeField(default=datetime.datetime.now,auto_now_add=True)
-    imageUrl = StringField(max_length=200)
+    """
+    model for product
+    """
+    title = StringField(max_length=200, required=True)
+    collection = ListField(EmbeddedDocumentField(Collection))
+    simpleDesc = StringField(max_length=200, default="To be updated")
+    fullDesc = StringField(max_length=500, default="To be updated")
+    price = IntField(default=0)
+    views = IntField(default=0)
+    like = IntField(default=0)
+    created = DateTimeField(default=datetime.datetime.now, auto_now_add=True)
+    imageSource = ImageField(
+        size=None, thumbnail_size=None, collection_name='images')
+    # imageUrl = StringField(max_length=200,required=False)
+    discount = StringField(max_length=200)
+
 
 class Users(Document):
-    username = StringField(max_length=100, min_length=None, allow_blank=False, trim_whitespace=True)
-    password = StringField(style={'input_type': 'password'},max_length=50, min_length=4, allow_blank=False, trim_whitespace=True)
-    displayname = StringField(max_length=100, min_length=None, allow_blank=False, trim_whitespace=True)
-    firstName = StringField(max_length=100, min_length=None, allow_blank=False, trim_whitespace=True)
-    lastname = StringField(max_length=100, min_length=None, allow_blank=False, trim_whitespace=True)
-    avatar = StringField(max_length=100, min_length=None, allow_blank=False, trim_whitespace=True)
-    email = EmailField(domain_whitelist=None, allow_utf8_user=False, allow_ip_domain=False)
-    created = DateTimeField(default=datetime.datetime.now,auto_now_add=True)
-    level = IntField(min_value=1, max_value=5, default = 1)
+    """
+    model for user
+    """
+    username = StringField(max_length=100, min_length=None,
+                           allow_blank=False, trim_hitespace=True, required=True)
+    password = StringField(input_type='password', max_length=50, min_length=8,
+                           allow_blank=False, trim_whitespace=True, required=True)
+    displayname = StringField(max_length=100, min_length=None,
+                              allow_blank=False, trim_whitespace=True, default="To be updated")
+    firstName = StringField(max_length=100, min_length=None,
+                            allow_blank=False, trim_whitespace=True, default="To be updated")
+    lastname = StringField(max_length=100, min_length=None,
+                           allow_blank=False, trim_whitespace=True, default="To be updated")
+    avatar = ImageField(size=None, thumbnail_size=None,
+                        collection_name='images')
+    email = EmailField(domain_whitelist=None, allow_utf8_user=False,
+                       allow_ip_domain=False, required=True)
+    created = DateTimeField(default=datetime.datetime.now, auto_now_add=True)
+    level = IntField(min_value=1, max_value=5, default=1)
 # Create your models here.

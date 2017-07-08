@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?><testsuite errors="0" failures="1" name="pytest" skips="0" tests="1" time="0.617"><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="79" name="test_upload_20_products" time="0.1130063533782959"><failure message="AssertionError: 400 != 201">self = &lt;webapp.tests.HttpServiceTestCase testMethod=test_upload_20_products&gt;
+
+    def test_upload_20_products(self):
+        &quot;&quot;&quot;
+            test to upload 20 products in a short time
+            &quot;&quot;&quot;
+        for index in range(0, 20):
+            with open(&apos;./client_assets/dog.jpg&apos;, &apos;rb&apos;) as file:
+                coll = json.dumps({
+                    &quot;collectionName&quot;: &quot;Apple %d&quot; % randint(0, 9),
+                    &quot;collectionDesc&quot;: &quot;Apple desc %s&quot; % (randint(0, 9))
+                })
+                views = randint(0, 10000)
+                like = randint(0, 10000)
+                price = randrange(10000, 1000000, 1000)
+                response = self.client.post(&apos;http://localhost:8000/webapp/api/products/&apos;, {
+                                            &apos;title&apos;: &apos;test post 1&apos;, &apos;imageSource&apos;: file, &apos;collection&apos;: coll, &apos;views&apos;: views, &apos;like&apos;: like, &apos;price&apos;: price}, format=&apos;multipart&apos;)
+            print(response.data)
+&gt;           self.assertEqual(response.status_code, 201)
+E           AssertionError: 400 != 201
+
+webapp\tests.py:96: AssertionError</failure><system-out>{&apos;collection&apos;: {&apos;non_field_errors&apos;: [&apos;Invalid data. Expected a dictionary, but got str.&apos;]}}
+</system-out></testcase></testsuite>

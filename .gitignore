@@ -1,2 +1,6 @@
 /backend/backend/__pycache__
 /backend/webapp/__pycache__
+/backend/static
+/backend/**/__pycache__
+/env/**/__pycache__
+/env/**
