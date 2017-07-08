@@ -127,10 +127,10 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            'format': '%(levelname)s %(asctime)s %(name)-15s %(module)s %(message)s'
         },
         'simple': {
-            'format': '%(levelname)s %(message)s'
+            'format': '%(levelname)s %(name)-15s %(message)s'
         },
     },
     'handlers':{
@@ -142,15 +142,48 @@ LOGGING = {
             'maxBytes': 1024*1024*5, # 5 MB
             'backupCount': 5,
         },
+        'file_lc':{
+            'level': 'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': 'debug_lc.log',
+            'formatter':'simple',
+            'maxBytes': 1024*1024*5, # 5 MB
+            'backupCount': 5,
+        },
         'console':{
             'class':'logging.StreamHandler'
         }
     },
     'loggers':{
+        '': {
+            'handlers': ['file_lc'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
         'django': {
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True
+        },
+        'django.request': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+        'django.server': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+        'django.db.backends': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': False
+        },
+        'django.template': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': False
         },
     },
 }

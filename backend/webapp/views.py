@@ -17,9 +17,7 @@ from .serializers import ProductSerializer, UserSerializer
 from .utils import FileHandle
 
 import logging
-
 logger = logging.getLogger(__name__)
-
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Products.objects.all()
@@ -32,7 +30,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         # request.data['imageUrl'] = FileHandle.saveFileLocal(
         #     self, request.data['imageSource'])
-        logger.log(request)
+        logger.debug(request)
         if request.data['collection']:
             request.data['collection'] = ast.literal_eval(request.data['collection'])
         serializer = self.get_serializer(data=request.data)
@@ -76,6 +74,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         Test distinct in mongoengine, this feature is used to get category name
         """
         snippets = Products.objects.distinct('collection.collectionName')
+        logger.debug(snippets)
         return Response(snippets, status=status.HTTP_200_OK)
 
     @detail_route(methods=['GET'])
