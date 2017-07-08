@@ -4,10 +4,11 @@ declare simple testcase, only http test still now
 import json
 import time
 import unittest
+import logging
 from random import randint, randrange
 
 from rest_framework.test import APIClient
-
+logger = logging.getLogger(__name__)
 
 
 # Create your tests here.
@@ -45,6 +46,7 @@ class HttpServiceTestCase(unittest.TestCase):
             })
             response = self.client.post('http://localhost:8000/webapp/api/products/', {
                                         'title': 'test post', 'imageSource': file, 'collection': coll}, format='multipart')
+            logger.debug(response.data)
             self.assertEqual(response.status_code, 201)
 
     def test_upload_file_product_then_delete_immediately(self):
@@ -58,11 +60,13 @@ class HttpServiceTestCase(unittest.TestCase):
             })
             response = self.client.post('http://localhost:8000/webapp/api/products/', {
                                         'title': 'test post', 'imageSource': file, 'collection': coll},format='multipart')
+            logger.debug(response.data)
             postID = response.data['id']
             self.assertEqual(response.status_code, 201)
             # Test get product details uploaded
             response = self.client.get(
                 'http://localhost:8000/webapp/api/products/%s/' % postID)
+            logger.debug(response.data)
             self.assertEqual(response.status_code, 200)
             # Test get imageSource from Product viewSet
             response = self.client.get(
@@ -75,6 +79,7 @@ class HttpServiceTestCase(unittest.TestCase):
             # Test delete product uploaded
             response = self.client.delete(
                 'http://localhost:8000/webapp/api/products/%s/' % postID)
+            logger.debug(response.data)
             self.assertEqual(response.status_code, 204)
 
     def test_upload_20_products(self):
@@ -92,16 +97,19 @@ class HttpServiceTestCase(unittest.TestCase):
                 price = randrange(10000, 1000000, 1000)
                 response = self.client.post('http://localhost:8000/webapp/api/products/', {
                                             'title': 'test post 1', 'imageSource': file, 'collection': coll, 'views': views, 'like': like, 'price': price}, format='multipart')
+            logger.debug(response.data)
             self.assertEqual(response.status_code, 201)
 
     def test_get_list_all_product(self):
         response = self.client.get(
             'http://localhost:8000/webapp/api/products/')
+        logger.debug(response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_get_file_from_mongodb(self):
         response = self.client.get(
             'http://localhost:8000/webapp/api/products/collection/')
+        logger.debug(response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_get_collection_name(self):
@@ -110,4 +118,5 @@ class HttpServiceTestCase(unittest.TestCase):
         """
         response = self.client.get(
             'http://localhost:8000/webapp/api/products/collection/')
+        logger.debug(response.data)
         self.assertEqual(response.status_code, 200)

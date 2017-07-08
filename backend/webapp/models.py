@@ -20,7 +20,7 @@ class Products(Document):
     model for product
     """
     title = StringField(max_length=200, required=True)
-    collection = ListField(EmbeddedDocumentField(Collection))
+    collection = EmbeddedDocumentListField(Collection)
     simpleDesc = StringField(max_length=200, default="To be updated")
     fullDesc = StringField(max_length=500, default="To be updated")
     price = IntField(default=0)

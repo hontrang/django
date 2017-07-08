@@ -30,9 +30,12 @@ class ProductViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         # request.data['imageUrl'] = FileHandle.saveFileLocal(
         #     self, request.data['imageSource'])
-        logger.debug(request)
-        if request.data['collection']:
-            request.data['collection'] = ast.literal_eval(request.data['collection'])
+        logger.debug(request.data)
+        # if request.data['collection']:
+        #     request.data['collection'] = ast.literal_eval(request.data['collection'])
+        collection = request.data.get('collection')
+        collection = self.convertStringToDict(collection)
+        request.data['collection'] = collection
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -61,6 +64,10 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save()
+
+    def convertStringToDict(self, data):
+        if type(data) is str:
+            return ast.literal_eval(data)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
