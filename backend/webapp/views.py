@@ -1,11 +1,15 @@
 import ast
 import os
 import time
+import logging
+
+
 
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from PIL import Image
+from django.utils.six import BytesIO
 from rest_framework import status
 from rest_framework.decorators import api_view, detail_route, list_route
 from rest_framework.parsers import JSONParser
@@ -16,7 +20,6 @@ from .models import Products, Users
 from .serializers import ProductSerializer, UserSerializer
 from .utils import FileHandle
 
-import logging
 logger = logging.getLogger(__name__)
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -88,12 +91,14 @@ class ProductViewSet(viewsets.ModelViewSet):
     def image(self, request, id=None, *args, **kwargs):
         snippets = Products.objects.get(id=id)
         ch = snippets['imageSource'].readchunk()
-        return HttpResponse(ch, content_type="image/jpeg")
+        stream = BytesIO(ch)
+        img = Image.open(stream)
+        response = HttpResponse(ch, content_type=img.format)
+        response['Content-Disposition'] = "filename=%s.%s" % (id,img.format)
+        return response
 
     @detail_route(methods=['GET'])
     def limit(self, request, max=10, *args, **kwargs):
-        print(request.path)
-        print(max)
         snippets = Products.objects[:int(max)]
         serializer = ProductSerializer(snippets, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
