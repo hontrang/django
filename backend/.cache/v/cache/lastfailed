@@ -1,1 +1,5 @@
-{}
+{
+  "webapp/tests.py::HttpServiceTestCase::test_credential_user_administrator": true,
+  "webapp/tests.py::HttpServiceTestCase::test_credential_user_customer_but_failed": true,
+  "webapp/tests.py::HttpServiceTestCase::test_get_list_group_user": true
+}

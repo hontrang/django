@@ -2,7 +2,7 @@ import ast
 import os
 import time
 import logging
-
+import json
 
 
 from django.http import HttpResponse, JsonResponse
@@ -172,12 +172,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response(ch, status=status.HTTP_201_CREATED)
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = Users.objects.all()
-    serializer_class = UserSerializer
-    lookup_field = 'id'
-
-
 @api_view(['GET', 'POST'])
 def product_list(request):
     """
@@ -215,3 +209,39 @@ def product_list_by_max(request, max, *args, **kwargs):
         snippets = Products.objects[:int(max)]
         serializer = ProductSerializer(snippets, many=True)
         return Response(serializer.data)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = Users.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = 'id'
+
+    @list_route(methods=['POST'])
+    def login(self, request, *args, **kwargs):
+        """
+        Login user, check group of user, if pass return 200, else return 405
+        """
+        snippets = Users.objects.get(email=request.data['email'])
+        serializer = UserSerializer(snippets)
+        logger.debug(serializer.data)
+        if (serializer.data['password'] == request.data['password']) and (request.data['group'] == serializer.data['group'] ):
+            return Response(serializer.data)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    @list_route(methods=['GET'])
+    def group_user(self, *args, **kwargs):
+        snippets = Users.objects.distinct('group')
+        logger.debug(snippets)
+        return Response(snippets, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['GET'])
+    def image(self, request, id=None, *args, **kwargs):
+        snippets = Users.objects.get(id=id)
+        ch = snippets['avatar'].readchunk()
+        stream = BytesIO(ch)
+        img = Image.open(stream)
+        response = HttpResponse(ch, content_type=img.format)
+        response['Content-Disposition'] = "filename=%s.%s" % (id,img.format)
+        return response
+
+        

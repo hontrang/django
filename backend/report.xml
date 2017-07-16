@@ -1,1 +1,276 @@
-<?xml version="1.0" encoding="utf-8"?><testsuite errors="0" failures="0" name="pytest" skips="0" tests="6" time="2.650"><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="106" name="test_get_collection_name" time="0.10900640487670898"></testcase><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="101" name="test_get_file_from_mongodb" time="0.009000539779663086"></testcase><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="96" name="test_get_list_all_product" time="1.6100921630859375"></testcase><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="36" name="test_post_a_file_to_http" time="0.03000164031982422"></testcase><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="79" name="test_upload_20_products" time="0.4470255374908447"></testcase><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="49" name="test_upload_file_product_then_delete_immediately" time="0.18001055717468262"></testcase></testsuite>
+<?xml version="1.0" encoding="utf-8"?><testsuite errors="0" failures="3" name="pytest" skips="0" tests="8" time="2.480"><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="37" name="test_credential_user_administrator" time="0.19401121139526367"><failure message="webapp.models.DoesNotExist: Users matching query does not exist.">self = [], q_objs = (), query = {&apos;email&apos;: &apos;user1@email.com&apos;}, queryset = []
+msg = &apos;Users matching query does not exist.&apos;
+
+    def get(self, *q_objs, **query):
+        &quot;&quot;&quot;Retrieve the the matching object raising
+            :class:`~mongoengine.queryset.MultipleObjectsReturned` or
+            `DocumentName.MultipleObjectsReturned` exception if multiple results
+            and :class:`~mongoengine.queryset.DoesNotExist` or
+            `DocumentName.DoesNotExist` if no results are found.
+    
+            .. versionadded:: 0.3
+            &quot;&quot;&quot;
+        queryset = self.clone()
+        queryset = queryset.order_by().limit(2)
+        queryset = queryset.filter(*q_objs, **query)
+    
+        try:
+&gt;           result = next(queryset)
+
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\mongoengine\queryset\base.py:273: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = []
+
+    def __next__(self):
+        &quot;&quot;&quot;Wrap the result in a :class:`~mongoengine.Document` object.
+            &quot;&quot;&quot;
+        if self._limit == 0 or self._none:
+            raise StopIteration
+    
+&gt;       raw_doc = next(self._cursor)
+
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\mongoengine\queryset\base.py:1466: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;pymongo.cursor.Cursor object at 0x04A5DBD0&gt;
+
+    def next(self):
+        &quot;&quot;&quot;Advance the cursor.&quot;&quot;&quot;
+        if self.__empty:
+            raise StopIteration
+        _db = self.__collection.database
+        if len(self.__data) or self._refresh():
+            if self.__manipulate:
+                return _db._fix_outgoing(self.__data.popleft(),
+                                         self.__collection)
+            else:
+                return self.__data.popleft()
+        else:
+&gt;           raise StopIteration
+E           StopIteration
+
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\pymongo\cursor.py:1121: StopIteration
+
+During handling of the above exception, another exception occurred:
+
+self = &lt;webapp.tests.HttpServiceTestCase testMethod=test_credential_user_administrator&gt;
+
+    def test_credential_user_administrator(self):
+        &quot;&quot;&quot;
+            Test ability to login user role administrator
+            &quot;&quot;&quot;
+        user = {
+            &quot;email&quot;:&quot;user1@email.com&quot;,
+            &quot;password&quot;: &quot;12345678&quot;,
+            &quot;username&quot;: &quot;user1&quot;,
+            &quot;group&quot;: &quot;admin&quot;
+        }
+        userdumps = json.dumps(user)
+        #logger.debug(userdumps)
+&gt;       response = self.client.post(&apos;http://localhost:8000/webapp/api/users/login/&apos;,data = user)
+
+webapp\tests.py:50: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\test.py:290: in post
+    path, data=data, format=format, content_type=content_type, **extra)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\test.py:212: in post
+    return self.generic(&apos;POST&apos;, path, data, content_type, **extra)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\django\test\client.py:416: in generic
+    return self.request(**r)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\test.py:279: in request
+    return super(APIClient, self).request(**kwargs)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\test.py:231: in request
+    request = super(APIRequestFactory, self).request(**kwargs)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\django\test\client.py:501: in request
+    six.reraise(*exc_info)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\django\utils\six.py:686: in reraise
+    raise value
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\django\core\handlers\exception.py:41: in inner
+    response = get_response(request)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\django\core\handlers\base.py:187: in _get_response
+    response = self.process_exception_by_middleware(e, request)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\django\core\handlers\base.py:185: in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\django\views\decorators\csrf.py:58: in wrapped_view
+    return view_func(*args, **kwargs)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\viewsets.py:86: in view
+    return self.dispatch(request, *args, **kwargs)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\views.py:489: in dispatch
+    response = self.handle_exception(exc)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\views.py:449: in handle_exception
+    self.raise_uncaught_exception(exc)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\views.py:486: in dispatch
+    response = handler(request, *args, **kwargs)
+webapp\views.py:224: in login
+    snippets = Users.objects.get(email=request.data[&apos;email&apos;])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = [], q_objs = (), query = {&apos;email&apos;: &apos;user1@email.com&apos;}, queryset = []
+msg = &apos;Users matching query does not exist.&apos;
+
+    def get(self, *q_objs, **query):
+        &quot;&quot;&quot;Retrieve the the matching object raising
+            :class:`~mongoengine.queryset.MultipleObjectsReturned` or
+            `DocumentName.MultipleObjectsReturned` exception if multiple results
+            and :class:`~mongoengine.queryset.DoesNotExist` or
+            `DocumentName.DoesNotExist` if no results are found.
+    
+            .. versionadded:: 0.3
+            &quot;&quot;&quot;
+        queryset = self.clone()
+        queryset = queryset.order_by().limit(2)
+        queryset = queryset.filter(*q_objs, **query)
+    
+        try:
+            result = next(queryset)
+        except StopIteration:
+            msg = (&apos;%s matching query does not exist.&apos;
+                   % queryset._document._class_name)
+&gt;           raise queryset._document.DoesNotExist(msg)
+E           webapp.models.DoesNotExist: Users matching query does not exist.
+
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\mongoengine\queryset\base.py:277: DoesNotExist</failure></testcase><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="53" name="test_credential_user_customer_but_failed" time="0.016000747680664062"><failure message="webapp.models.DoesNotExist: Users matching query does not exist.">self = [], q_objs = (), query = {&apos;email&apos;: &apos;user1@email.com&apos;}, queryset = []
+msg = &apos;Users matching query does not exist.&apos;
+
+    def get(self, *q_objs, **query):
+        &quot;&quot;&quot;Retrieve the the matching object raising
+            :class:`~mongoengine.queryset.MultipleObjectsReturned` or
+            `DocumentName.MultipleObjectsReturned` exception if multiple results
+            and :class:`~mongoengine.queryset.DoesNotExist` or
+            `DocumentName.DoesNotExist` if no results are found.
+    
+            .. versionadded:: 0.3
+            &quot;&quot;&quot;
+        queryset = self.clone()
+        queryset = queryset.order_by().limit(2)
+        queryset = queryset.filter(*q_objs, **query)
+    
+        try:
+&gt;           result = next(queryset)
+
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\mongoengine\queryset\base.py:273: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = []
+
+    def __next__(self):
+        &quot;&quot;&quot;Wrap the result in a :class:`~mongoengine.Document` object.
+            &quot;&quot;&quot;
+        if self._limit == 0 or self._none:
+            raise StopIteration
+    
+&gt;       raw_doc = next(self._cursor)
+
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\mongoengine\queryset\base.py:1466: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;pymongo.cursor.Cursor object at 0x04C1B630&gt;
+
+    def next(self):
+        &quot;&quot;&quot;Advance the cursor.&quot;&quot;&quot;
+        if self.__empty:
+            raise StopIteration
+        _db = self.__collection.database
+        if len(self.__data) or self._refresh():
+            if self.__manipulate:
+                return _db._fix_outgoing(self.__data.popleft(),
+                                         self.__collection)
+            else:
+                return self.__data.popleft()
+        else:
+&gt;           raise StopIteration
+E           StopIteration
+
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\pymongo\cursor.py:1121: StopIteration
+
+During handling of the above exception, another exception occurred:
+
+self = &lt;webapp.tests.HttpServiceTestCase testMethod=test_credential_user_customer_but_failed&gt;
+
+    def test_credential_user_customer_but_failed(self):
+        &quot;&quot;&quot;
+            Test ability to login user role customer but failed
+            &quot;&quot;&quot;
+        user = {
+            &quot;email&quot;:&quot;user1@email.com&quot;,
+            &quot;password&quot;: &quot;12345678&quot;,
+            &quot;username&quot;: &quot;user1&quot;,
+            &quot;group&quot;: &quot;customer&quot;
+        }
+        userdumps = json.dumps(user)
+        #logger.debug(userdumps)
+&gt;       response = self.client.post(&apos;http://localhost:8000/webapp/api/users/login/&apos;,data = user)
+
+webapp\tests.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\test.py:290: in post
+    path, data=data, format=format, content_type=content_type, **extra)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\test.py:212: in post
+    return self.generic(&apos;POST&apos;, path, data, content_type, **extra)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\django\test\client.py:416: in generic
+    return self.request(**r)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\test.py:279: in request
+    return super(APIClient, self).request(**kwargs)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\test.py:231: in request
+    request = super(APIRequestFactory, self).request(**kwargs)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\django\test\client.py:501: in request
+    six.reraise(*exc_info)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\django\utils\six.py:686: in reraise
+    raise value
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\django\core\handlers\exception.py:41: in inner
+    response = get_response(request)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\django\core\handlers\base.py:187: in _get_response
+    response = self.process_exception_by_middleware(e, request)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\django\core\handlers\base.py:185: in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\django\views\decorators\csrf.py:58: in wrapped_view
+    return view_func(*args, **kwargs)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\viewsets.py:86: in view
+    return self.dispatch(request, *args, **kwargs)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\views.py:489: in dispatch
+    response = self.handle_exception(exc)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\views.py:449: in handle_exception
+    self.raise_uncaught_exception(exc)
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\rest_framework\views.py:486: in dispatch
+    response = handler(request, *args, **kwargs)
+webapp\views.py:224: in login
+    snippets = Users.objects.get(email=request.data[&apos;email&apos;])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = [], q_objs = (), query = {&apos;email&apos;: &apos;user1@email.com&apos;}, queryset = []
+msg = &apos;Users matching query does not exist.&apos;
+
+    def get(self, *q_objs, **query):
+        &quot;&quot;&quot;Retrieve the the matching object raising
+            :class:`~mongoengine.queryset.MultipleObjectsReturned` or
+            `DocumentName.MultipleObjectsReturned` exception if multiple results
+            and :class:`~mongoengine.queryset.DoesNotExist` or
+            `DocumentName.DoesNotExist` if no results are found.
+    
+            .. versionadded:: 0.3
+            &quot;&quot;&quot;
+        queryset = self.clone()
+        queryset = queryset.order_by().limit(2)
+        queryset = queryset.filter(*q_objs, **query)
+    
+        try:
+            result = next(queryset)
+        except StopIteration:
+            msg = (&apos;%s matching query does not exist.&apos;
+                   % queryset._document._class_name)
+&gt;           raise queryset._document.DoesNotExist(msg)
+E           webapp.models.DoesNotExist: Users matching query does not exist.
+
+c:\users\abc\appdata\local\programs\python\python36-32\lib\site-packages\mongoengine\queryset\base.py:277: DoesNotExist</failure></testcase><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="149" name="test_get_collection_name" time="0.00700068473815918"></testcase><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="142" name="test_get_list_all_product" time="0.0500025749206543"></testcase><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="68" name="test_get_list_group_user" time="0.006000518798828125"><failure message="AssertionError: &apos;admin&apos; not found in []">self = &lt;webapp.tests.HttpServiceTestCase testMethod=test_get_list_group_user&gt;
+
+    def test_get_list_group_user(self):
+        &quot;&quot;&quot;
+            get list of group users
+            &quot;&quot;&quot;
+        response = self.client.get(&apos;http://localhost:8000/webapp/api/users/group_user/&apos;)
+        logger.debug(response.data)
+&gt;       self.assertIn(&quot;admin&quot;, response.data)
+E       AssertionError: &apos;admin&apos; not found in []
+
+webapp\tests.py:75: AssertionError</failure></testcase><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="77" name="test_post_a_file_to_http" time="0.03300213813781738"></testcase><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="124" name="test_upload_20_products" time="0.6860392093658447"></testcase><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="91" name="test_upload_file_product_then_delete_immediately" time="0.16400933265686035"></testcase></testsuite>

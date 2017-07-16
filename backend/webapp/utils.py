@@ -3,7 +3,7 @@ import os
 
 from django.conf import settings
 class FileHandle():
-    def saveFileLocal(self, source):
+    def saveFileLocal(source):
         filesrc = source
         ch = filesrc.chunks()
         filename = "%s-%s" %(str(time.time()).replace('.','_'), filesrc.name)
@@ -13,7 +13,7 @@ class FileHandle():
             file.close()
         return filename
     
-    def deleteExistedLocal(self, source):
+    def deleteExistedLocal(source):
         filename = '%s/%s' %(settings.STATICFILES_DIRS, source )
         if os.path.isfile(filename):
             try:

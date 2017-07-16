@@ -7,7 +7,7 @@ import ast
 from django.conf import settings
 from rest_framework_mongoengine import serializers
 from rest_framework.exceptions import ValidationError
-from .models import Products, Users, Collection
+from .models import *
 logger = logging.getLogger(__name__)
 
 class CollectionSerializer(serializers.EmbeddedDocumentSerializer):
@@ -30,12 +30,32 @@ class ProductSerializer(serializers.DocumentSerializer):
         fields = '__all__'
         ordering = ['-created']
 
+class DeliveryInfoSerializer(serializers.EmbeddedDocumentSerializer):
+    """
+    define serializer for delivery info embedded document
+    """
+    class Meta:
+        """
+        TDB
+        """
+        model = DeliveryInfo
+        fields = '__all__'
 
+class PaymentSerializer(serializers.EmbeddedDocumentSerializer):
+    """
+    Define serializer for payment embedded document
+    """
+    class Meta:
+        model = Payment
+        fields = '__all__'
 
 class UserSerializer(serializers.DocumentSerializer):
     """
     TBD
     """
+    deliveryAddress = DeliveryInfoSerializer(many=True,read_only=True)
+    payment = PaymentSerializer(many=True,read_only=True)
+    returnItems = ProductSerializer(many=True,read_only=True)
     class Meta:
         """
         TBD
@@ -43,4 +63,5 @@ class UserSerializer(serializers.DocumentSerializer):
         model = Users
         fields = '__all__'
         ordering = ['-created']
+        depth = 2
 
