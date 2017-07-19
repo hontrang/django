@@ -63,5 +63,4 @@ class UserSerializer(serializers.DocumentSerializer):
         model = Users
         fields = '__all__'
         ordering = ['-created']
-        depth = 2
 

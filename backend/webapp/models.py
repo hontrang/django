@@ -64,11 +64,9 @@ class Users(Document):
                        allow_blank=False, trim_whitespace=True)
     email = EmailField(domain_whitelist=None, allow_utf8_user=False,
                        allow_ip_domain=False, required=True)
-    birdthday = DateTimeField(auto_now_add=True)
+    birdthday = DateTimeField(auto_now_add=True,default=datetime.datetime.now)
     password = StringField(input_type='password', max_length=50, min_length=8,
                            allow_blank=False, trim_whitespace=True, required=True)
-    avatar = ImageField(size=None, thumbnail_size=None,
-                        collection_name='images')
     displayName = StringField(max_length=100, min_length=None,
                               allow_blank=False, trim_whitespace=True, default="To be updated")
     firstName = StringField(max_length=100, min_length=None,

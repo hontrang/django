@@ -206,6 +206,7 @@ STATICFILES_DIRS = STATICFILES_DIRS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -224,5 +225,6 @@ STATIC_URL = '/static/'
 
 
 REST_FRAMEWORK = {
-    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'DEFAULT_PAGINATION_CLASS': 'webapp.pagination.StandardResultsSetPagination'
 }

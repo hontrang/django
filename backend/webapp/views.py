@@ -17,10 +17,12 @@ from rest_framework.response import Response
 from rest_framework_mongoengine import viewsets
 
 from .models import Products, Users
+from .pagination import *
 from .serializers import ProductSerializer, UserSerializer
 from .utils import FileHandle
 
 logger = logging.getLogger(__name__)
+
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Products.objects.all()
@@ -54,7 +56,8 @@ class ProductViewSet(viewsets.ModelViewSet):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         # FileHandle.deleteExistedLocal(self, instance['imageUrl'])
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
@@ -94,7 +97,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         stream = BytesIO(ch)
         img = Image.open(stream)
         response = HttpResponse(ch, content_type=img.format)
-        response['Content-Disposition'] = "filename=%s.%s" % (id,img.format)
+        response['Content-Disposition'] = "filename=%s.%s" % (id, img.format)
         return response
 
     @detail_route(methods=['GET'])
@@ -224,7 +227,7 @@ class UserViewSet(viewsets.ModelViewSet):
         snippets = Users.objects.get(email=request.data['email'])
         serializer = UserSerializer(snippets)
         logger.debug(serializer.data)
-        if (serializer.data['password'] == request.data['password']) and (request.data['group'] == serializer.data['group'] ):
+        if (serializer.data['password'] == request.data['password']):
             return Response(serializer.data)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -241,7 +244,15 @@ class UserViewSet(viewsets.ModelViewSet):
         stream = BytesIO(ch)
         img = Image.open(stream)
         response = HttpResponse(ch, content_type=img.format)
-        response['Content-Disposition'] = "filename=%s.%s" % (id,img.format)
+        response['Content-Disposition'] = "filename=%s.%s" % (id, img.format)
         return response
 
-        
+    @list_route(methods=['GET'])
+    def collection(self, request, *args, **kwargs):
+        """
+        Test distinct in mongoengine, this feature is used to get group user name
+        """
+        snippets = Users.objects.distinct('group')
+        return Response(snippets, status=status.HTTP_200_OK)
+
+
