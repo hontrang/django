@@ -18,7 +18,7 @@ class Collection(EmbeddedDocument):
 class Products(Document):
     """
     model for product
-    """
+    """ 
     title = StringField(max_length=200, required=True)
     collection = EmbeddedDocumentListField(Collection)
     simpleDesc = StringField(max_length=200, default="To be updated")
@@ -67,8 +67,6 @@ class Users(Document):
     birdthday = DateTimeField(auto_now_add=True,default=datetime.datetime.now)
     password = StringField(input_type='password', max_length=50, min_length=8,
                            allow_blank=False, trim_whitespace=True, required=True)
-    displayName = StringField(max_length=100, min_length=None,
-                              allow_blank=False, trim_whitespace=True, default="To be updated")
     firstName = StringField(max_length=100, min_length=None,
                             allow_blank=False, trim_whitespace=True, default="To be updated")
     lastName = StringField(max_length=100, min_length=None,
@@ -77,9 +75,11 @@ class Users(Document):
                         collection_name='images')
     deliveryAddress = EmbeddedDocumentListField(DeliveryInfo)
     payment = EmbeddedDocumentListField(Payment)
-    returnItems=ReferenceField(Products,reverse_delete_rule=CASCADE)
-    cartList = ReferenceField(Products,reverse_delete_rule=CASCADE)
-    favorite = ReferenceField(Products,reverse_delete_rule=CASCADE)
+    returnItems=ListField(ReferenceField(Products,reverse_delete_rule=CASCADE,dbref=True))
+    cartList = ListField(ReferenceField(Products,reverse_delete_rule=CASCADE,dbref=True))
+    # cartList = ListField(StringField())
+
+    favorite = ListField(ReferenceField(Products,reverse_delete_rule=CASCADE,dbref=True))
     created = DateTimeField(default=datetime.datetime.now, auto_now_add=True)
     level = IntField(min_value=1, max_value=5, default=1)
     group = StringField(default='customer',

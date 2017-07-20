@@ -24,7 +24,14 @@ from .utils import FileHandle
 logger = logging.getLogger(__name__)
 
 
-class ProductViewSet(viewsets.ModelViewSet):
+class BaseViewSet(viewsets.ModelViewSet):
+    lookup_field = 'id'
+    """
+    Create a model instance.
+    """
+
+
+class ProductViewSet(BaseViewSet):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'id'
@@ -214,7 +221,7 @@ def product_list_by_max(request, max, *args, **kwargs):
         return Response(serializer.data)
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(BaseViewSet):
     queryset = Users.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'id'
@@ -254,5 +261,3 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         snippets = Users.objects.distinct('group')
         return Response(snippets, status=status.HTTP_200_OK)
-
-
