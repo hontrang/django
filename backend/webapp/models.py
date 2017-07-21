@@ -76,7 +76,7 @@ class Users(Document):
     deliveryAddress = EmbeddedDocumentListField(DeliveryInfo)
     payment = EmbeddedDocumentListField(Payment)
     returnItems=ListField(ReferenceField(Products,reverse_delete_rule=CASCADE,dbref=True))
-    cartList = ListField(ReferenceField(Products,reverse_delete_rule=CASCADE,dbref=True))
+    cartList = ReferenceField(Products,reverse_delete_rule=NULLIFY,dbref=True)
     # cartList = ListField(StringField())
 
     favorite = ListField(ReferenceField(Products,reverse_delete_rule=CASCADE,dbref=True))

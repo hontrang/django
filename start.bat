@@ -1,6 +1,6 @@
 :: This script to bootup django web backend
 TITLE This script to bootup django web backend
-@eho off
+@echo off
 
 :: CONFIGURATIONS
 
@@ -9,8 +9,8 @@ SET SLEEP_TIME=2
 SET ROOT=backend
 
 :: MAIN SCRIPT
-REM CALL %ENV_ACTIVE_SCRIPT%
-REM TIMEOUT %SLEEP_TIME%
+CALL %ENV_ACTIVE_SCRIPT%
+TIMEOUT %SLEEP_TIME%
 CD %ROOT%
 REM ECHO %CD%
 python manage.py runserver

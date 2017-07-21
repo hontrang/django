@@ -195,11 +195,11 @@ class HttpServiceTestCase(unittest.TestCase):
         product1 = responsep0.data['results'][1]
         product2 = responsep0.data['results'][2]
         responseu0 = self.client.get(
-            'http://localhost:8000/webapp/api/users/5970b1db96279ab6ccf3deea/')
+            'http://localhost:8000/webapp/api/users/59719fd896279a2aac7be90d/')
         self.assertEqual(responseu0.status_code, 200)
         user0 = responseu0.data
         logger.debug(user0['id'])
-        _list = [{'_id': product0['id']}, {'_id': product1['id']}]
+        _list = {'_id': product1['id']}
 
         responseu1 = self.client.patch(
             'http://localhost:8000/webapp/api/users/%s/' % user0['id'], {'cartList': _list}, format='json')

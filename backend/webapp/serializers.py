@@ -107,6 +107,7 @@ class UserSerializer(BaseAppSerializer):
     """
     deliveryAddress = DeliveryInfoSerializer(many=True, read_only=True)
     payment = PaymentSerializer(many=True, read_only=True)
+    # cartList = ProductSerializer(many=True, read_only=True)
 
     class Meta:
         """
