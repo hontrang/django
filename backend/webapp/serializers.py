@@ -116,12 +116,4 @@ class UserSerializer(BaseAppSerializer):
         model = Users
         fields = '__all__'
         ordering = ['-created']
-        # depth = 2
-    
-    def update(self, instance, validated_data):
-        raise_errors_on_nested_writes('update', self, validated_data)
-        logger.debug(validated_data)
-        instance = self.recursive_save(validated_data, instance)
-
-        return instance
 

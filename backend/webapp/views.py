@@ -2,7 +2,7 @@ import ast
 import os
 import time
 import logging
-import json
+from bson.json_util import dumps
 
 
 from django.http import HttpResponse, JsonResponse
@@ -232,6 +232,7 @@ class UserViewSet(BaseViewSet):
         Login user, check group of user, if pass return 200, else return 405
         """
         snippets = Users.objects.get(email=request.data['email'])
+        logger.debug(snippets)
         serializer = UserSerializer(snippets)
         logger.debug(serializer.data)
         if (serializer.data['password'] == request.data['password']):
@@ -261,3 +262,30 @@ class UserViewSet(BaseViewSet):
         """
         snippets = Users.objects.distinct('group')
         return Response(snippets, status=status.HTTP_200_OK)
+    
+    @detail_route(methods=['GET'])
+    def aggregate(self, request, id=None,*args, **kwargs):
+        """
+        Test distinct in mongoengine, this feature is used to get group user name
+        """
+        pipeline = {
+            '$lookup':
+            {
+                'from':'products',
+                'localField':'cartList',
+                'foreignField':'_id',
+                'as':'product_in_cartList'
+            }
+        }
+
+        pipeline1 = {
+            '$match':{
+                'name':'user3082'
+            }
+        }
+        snippets = list(Users.objects(id=id).aggregate(pipeline1))
+        logger.debug(snippets)
+        serializer = UserSerializer(snippets)
+        logger.debug(serializer.data)
+
+        return Response('',status=status.HTTP_200_OK)

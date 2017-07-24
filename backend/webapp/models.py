@@ -26,7 +26,7 @@ class Products(Document):
     price = IntField(default=0)
     views = IntField(default=0)
     like = IntField(default=0)
-    created = DateTimeField(default=datetime.datetime.now, auto_now_add=True)
+    created = DateTimeField(default=datetime.datetime.now)
     imageSource = ImageField(
         size=None, thumbnail_size=None, collection_name='images')
     # imageUrl = StringField(max_length=200,required=False)
@@ -64,7 +64,7 @@ class Users(Document):
                        allow_blank=False, trim_whitespace=True)
     email = EmailField(domain_whitelist=None, allow_utf8_user=False,
                        allow_ip_domain=False, required=True)
-    birdthday = DateTimeField(auto_now_add=True,default=datetime.datetime.now)
+    birdthday = DateTimeField(default=datetime.datetime.now)
     password = StringField(input_type='password', max_length=50, min_length=8,
                            allow_blank=False, trim_whitespace=True, required=True)
     firstName = StringField(max_length=100, min_length=None,
@@ -75,12 +75,10 @@ class Users(Document):
                         collection_name='images')
     deliveryAddress = EmbeddedDocumentListField(DeliveryInfo)
     payment = EmbeddedDocumentListField(Payment)
-    returnItems=ListField(ReferenceField(Products,reverse_delete_rule=CASCADE,dbref=True))
-    cartList = ReferenceField(Products,reverse_delete_rule=NULLIFY,dbref=True)
-    # cartList = ListField(StringField())
-
-    favorite = ListField(ReferenceField(Products,reverse_delete_rule=CASCADE,dbref=True))
-    created = DateTimeField(default=datetime.datetime.now, auto_now_add=True)
+    returnItems=ListField(ReferenceField(Products,reverse_delete_rule=PULL ))
+    cartList = ListField(ReferenceField(Products,reverse_delete_rule=PULL ))
+    favorite = ListField(ReferenceField(Products,reverse_delete_rule=PULL ))
+    created = DateTimeField(default=datetime.datetime.now)
     level = IntField(min_value=1, max_value=5, default=1)
     group = StringField(default='customer',
                         allow_blank=False, trim_whitespace=True)

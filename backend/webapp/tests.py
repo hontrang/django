@@ -45,8 +45,6 @@ class HttpServiceTestCase(unittest.TestCase):
             "username": "user1",
             "group": "admin"
         }
-        userdumps = json.dumps(user)
-        # logger.debug(userdumps)
         response = self.client.post(
             'http://localhost:8000/webapp/api/users/login/', data=user)
         logger.debug(response.data)
@@ -194,12 +192,13 @@ class HttpServiceTestCase(unittest.TestCase):
         product0 = responsep0.data['results'][0]
         product1 = responsep0.data['results'][1]
         product2 = responsep0.data['results'][2]
+        users = self.client.get(
+            'http://localhost:8000/webapp/api/users/')
         responseu0 = self.client.get(
-            'http://localhost:8000/webapp/api/users/59719fd896279a2aac7be90d/')
+            'http://localhost:8000/webapp/api/users/{userid}/'.format(userid=users.data['results'][0]['id']))
         self.assertEqual(responseu0.status_code, 200)
         user0 = responseu0.data
-        logger.debug(user0['id'])
-        _list = {'_id': product1['id']}
+        _list = [{'_id': product0['id']},{'_id': product1['id']},{'_id': product2['id']}]
 
         responseu1 = self.client.patch(
             'http://localhost:8000/webapp/api/users/%s/' % user0['id'], {'cartList': _list}, format='json')
