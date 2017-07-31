@@ -5,3 +5,5 @@
 /env/**/__pycache__
 /backend/*.log
 /backend/*.xml
+/backend/.cache/v/cache/lastfailed
+/backend/*.html

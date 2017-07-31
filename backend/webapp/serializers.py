@@ -2,60 +2,25 @@
 declare serializers
 """
 import logging
+import copy
+import ast
+import inspect
 from django.conf import settings
-from rest_framework_mongoengine import serializers
-from .models import *
 from mongoengine.errors import ValidationError as me_ValidationError
+from rest_framework_mongoengine import serializers
+from rest_framework import serializers as drf
+from collections import Mapping, OrderedDict
+
+from django.core.exceptions import ValidationError as DjangoValidationError
+from rest_framework.settings import api_settings
+from rest_framework.fields import set_value
+from rest_framework.fields import (  # NOQA # isort:skip
+    CreateOnlyDefault, CurrentUserDefault, SkipField, empty
+)
+
+from .models import *
 
 logger = logging.getLogger(__name__)
-
-
-def raise_errors_on_nested_writes(method_name, serializer, validated_data):
-    # *** inherited from DRF 3, altered for EmbeddedDocumentSerializer to pass ***
-    assert not any(
-        isinstance(field, serializers.DocumentSerializer) and
-        not isinstance(field, serializers.EmbeddedDocumentSerializer) and
-        (key in validated_data)
-        for key, field in serializer.fields.items()
-    ), (
-        'The `.{method_name}()` method does not support writable nested'
-        'fields by default.\nWrite an explicit `.{method_name}()` method for '
-        'serializer `{module}.{class_name}`, or set `read_only=True` on '
-        'nested serializer fields.'.format(
-            method_name=method_name,
-            module=serializer.__class__.__module__,
-            class_name=serializer.__class__.__name__
-        )
-    )
-
-    assert not any(
-        '.' in field.source and (key in validated_data) and
-        isinstance(validated_data[key], (list, dict))
-        for key, field in serializer.fields.items()
-    ), (
-        'The `.{method_name}()` method does not support writable dotted-source '
-        'fields by default.\nWrite an explicit `.{method_name}()` method for '
-        'serializer `{module}.{class_name}`, or set `read_only=True` on '
-        'dotted-source serializer fields.'.format(
-            method_name=method_name,
-            module=serializer.__class__.__module__,
-            class_name=serializer.__class__.__name__
-        )
-    )
-
-
-class BaseAppSerializer(serializers.DocumentSerializer):
-    """define base serializer
-    """
-    class Meta:
-        pass
-
-    def update(self, instance, validated_data):
-        raise_errors_on_nested_writes('update', self, validated_data)
-
-        instance = self.recursive_save(validated_data, instance)
-        logger.debug(instance)
-        return instance
 
 
 class CollectionSerializer(serializers.EmbeddedDocumentSerializer):
@@ -67,7 +32,7 @@ class CollectionSerializer(serializers.EmbeddedDocumentSerializer):
         fields = '__all__'
 
 
-class ProductSerializer(BaseAppSerializer):
+class ProductSerializer(serializers.DocumentSerializer):
     """
     TBD
     """
@@ -101,13 +66,13 @@ class PaymentSerializer(serializers.EmbeddedDocumentSerializer):
         fields = '__all__'
 
 
-class UserSerializer(BaseAppSerializer):
+class UserSerializer(serializers.DocumentSerializer):
     """
     TBD
     """
     deliveryAddress = DeliveryInfoSerializer(many=True, read_only=True)
     payment = PaymentSerializer(many=True, read_only=True)
-    # cartList = ProductSerializer(many=True, read_only=True)
+    # cartList = ListReference()
 
     class Meta:
         """
@@ -116,4 +81,40 @@ class UserSerializer(BaseAppSerializer):
         model = Users
         fields = '__all__'
         ordering = ['-created']
+        depth = 2
+
+    def to_internal_value(self, data):
+        """
+        Calls super() from DRF, but with an addition.
+        Creates initial_data and _validated_data for nested
+        EmbeddedDocumentSerializers, so that recursive_save could make
+        use of them.
+        If meets any arbitrary data, not expected by fields,
+        just silently drops them from validated_data.
+        """
+        # for EmbeddedDocumentSerializers create initial data
+        # so that _get_dynamic_data could use them
+        for field in self._writable_fields:
+            if isinstance(field, serializers.EmbeddedDocumentSerializer) and field.field_name in data:
+                field.initial_data = data[field.field_name]
+            if isinstance(field, drf.ListField) and field.field_name in data and hasattr(field, 'child'):
+                child_data = field.get_value(data)
+                li=[]
+                for x in  range((len(child_data))):
+                    j = ast.literal_eval(child_data[x])                    
+                    d = field.child.get_value(ast.literal_eval(child_data[x]))
+                    query = Products.objects.get(id=j['_id'])
+                    li.append(query)
+                    
+        ret = super(serializers.DocumentSerializer, self).to_internal_value(data)
+        # for EmbeddedDocumentSerializers create _validated_data
+        # so that create()/update() could use them
+        for field in self._writable_fields:
+            logger.debug(field.field_name)
+            if isinstance(field, serializers.EmbeddedDocumentSerializer) and field.field_name in ret:
+                field._validated_data = ret[field.field_name]
+            if isinstance(field, drf.ListField) and field.field_name in data and hasattr(field, 'child'):
+                ret[field.field_name] = li
+        return ret
+
 

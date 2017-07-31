@@ -1,84 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?><testsuite errors="0" failures="1" name="pytest" skips="0" tests="1" time="0.986"><testcase classname="webapp.tests.HttpServiceTestCase" file="webapp\tests.py" line="184" name="test_add_item_to_cart_list" time="0.40702342987060547"><failure message="TypeError: TopLevelDocumentMetaclass object argument after ** must be a mapping, not DBRef">self = &lt;webapp.tests.HttpServiceTestCase testMethod=test_add_item_to_cart_list&gt;
-
-    def test_add_item_to_cart_list(self):
-        &quot;&quot;&quot;
-            ability to add product object to user means items ready to pay
-            &quot;&quot;&quot;
-        responsep0 = self.client.get(
-            &apos;http://localhost:8000/webapp/api/products/&apos;)
-        self.assertEqual(responsep0.status_code, 200)
-        product0 = responsep0.data[&apos;results&apos;][0]
-        product1 = responsep0.data[&apos;results&apos;][1]
-        product2 = responsep0.data[&apos;results&apos;][2]
-        users = self.client.get(
-            &apos;http://localhost:8000/webapp/api/users/&apos;)
-        responseu0 = self.client.get(
-            &apos;http://localhost:8000/webapp/api/users/{userid}/&apos;.format(userid=users.data[&apos;results&apos;][0][&apos;id&apos;]))
-        self.assertEqual(responseu0.status_code, 200)
-        user0 = responseu0.data
-        _list = [{&apos;_id&apos;: product0[&apos;id&apos;]},{&apos;_id&apos;: product1[&apos;id&apos;]},{&apos;_id&apos;: product2[&apos;id&apos;]}]
-    
-        responseu1 = self.client.patch(
-&gt;           &apos;http://localhost:8000/webapp/api/users/%s/&apos; % user0[&apos;id&apos;], {&apos;cartList&apos;: _list}, format=&apos;json&apos;)
-
-webapp\tests.py:204: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-..\env\lib\site-packages\rest_framework\test.py:306: in patch
-    path, data=data, format=format, content_type=content_type, **extra)
-..\env\lib\site-packages\rest_framework\test.py:220: in patch
-    return self.generic(&apos;PATCH&apos;, path, data, content_type, **extra)
-..\env\lib\site-packages\django\test\client.py:416: in generic
-    return self.request(**r)
-..\env\lib\site-packages\rest_framework\test.py:279: in request
-    return super(APIClient, self).request(**kwargs)
-..\env\lib\site-packages\rest_framework\test.py:231: in request
-    request = super(APIRequestFactory, self).request(**kwargs)
-..\env\lib\site-packages\django\test\client.py:501: in request
-    six.reraise(*exc_info)
-..\env\lib\site-packages\django\utils\six.py:686: in reraise
-    raise value
-..\env\lib\site-packages\django\core\handlers\exception.py:41: in inner
-    response = get_response(request)
-..\env\lib\site-packages\django\core\handlers\base.py:187: in _get_response
-    response = self.process_exception_by_middleware(e, request)
-..\env\lib\site-packages\django\core\handlers\base.py:185: in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-..\env\lib\site-packages\django\views\decorators\csrf.py:58: in wrapped_view
-    return view_func(*args, **kwargs)
-..\env\lib\site-packages\rest_framework\viewsets.py:86: in view
-    return self.dispatch(request, *args, **kwargs)
-..\env\lib\site-packages\rest_framework\views.py:489: in dispatch
-    response = self.handle_exception(exc)
-..\env\lib\site-packages\rest_framework\views.py:449: in handle_exception
-    self.raise_uncaught_exception(exc)
-..\env\lib\site-packages\rest_framework\views.py:486: in dispatch
-    response = handler(request, *args, **kwargs)
-..\env\lib\site-packages\rest_framework\mixins.py:84: in partial_update
-    return self.update(request, *args, **kwargs)
-..\env\lib\site-packages\rest_framework\mixins.py:70: in update
-    self.perform_update(serializer)
-..\env\lib\site-packages\rest_framework\mixins.py:80: in perform_update
-    serializer.save()
-..\env\lib\site-packages\rest_framework\serializers.py:210: in save
-    self.instance = self.update(self.instance, validated_data)
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
-self = UserSerializer(&lt;webapp.models.Users: user3082&gt;, context={&apos;request&apos;: &lt;rest_framework.request.Request object at 0x04F08D...at 0x5DDBA940&gt;)
-    level = IntegerField(default=1, max_value=5, min_value=1)
-    group = CharField(default=&apos;customer&apos;)
-instance = &lt;Users: Users object&gt;, validated_data = {}
-
-    def update(self, instance, validated_data):
-        logger.debug(validated_data)
-        comments = validated_data.pop(&apos;cartList&apos;)
-        updated_instance = super(UserSerializer, self).update(instance, validated_data)
-    
-        for comment_data in comments:
-&gt;           updated_instance.cartList.append(Products(**comment_data))
-E           TypeError: TopLevelDocumentMetaclass object argument after ** must be a mapping, not DBRef
-
-webapp\serializers.py:126: TypeError</failure><system-out>(&lt;class &apos;mongoengine.document.Document&apos;&gt;, &lt;class &apos;bson.dbref.DBRef&apos;&gt;)
-(&lt;class &apos;mongoengine.document.Document&apos;&gt;, &lt;class &apos;bson.dbref.DBRef&apos;&gt;)
-(&lt;class &apos;mongoengine.document.Document&apos;&gt;, &lt;class &apos;bson.dbref.DBRef&apos;&gt;)
-(&lt;class &apos;mongoengine.document.Document&apos;&gt;, &lt;class &apos;bson.dbref.DBRef&apos;&gt;)
+<?xml version="1.0" encoding="utf-8"?><testsuite errors="0" failures="0" name="pytest" skips="0" tests="1" time="0.549"><testcase classname="webapp.tests.test_http_connection.HttpServiceTestCase" file="webapp\tests\test_http_connection.py" line="184" name="test_add_item_to_cart_list" time="0.27901625633239746"><system-out>[&apos;name&apos;]user4132
+[&apos;email&apos;]user4132@email.com
+[&apos;password&apos;]12345678
+[&apos;firstName&apos;]user4132
+[&apos;lastName&apos;]user4132
+[&apos;returnItems&apos;][]
+[&apos;favorite&apos;][]
+[&apos;created&apos;]2017-07-31 23:43:49.728394
+[&apos;level&apos;]1
+[&apos;group&apos;]cust
 </system-out></testcase></testsuite>

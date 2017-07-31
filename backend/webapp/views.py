@@ -2,7 +2,8 @@ import ast
 import os
 import time
 import logging
-from bson.json_util import dumps
+
+from django.core import serializers
 
 
 from django.http import HttpResponse, JsonResponse
@@ -19,7 +20,6 @@ from rest_framework_mongoengine import viewsets
 from .models import Products, Users
 from .pagination import *
 from .serializers import ProductSerializer, UserSerializer
-from .utils import FileHandle
 
 logger = logging.getLogger(__name__)
 
@@ -262,30 +262,38 @@ class UserViewSet(BaseViewSet):
         """
         snippets = Users.objects.distinct('group')
         return Response(snippets, status=status.HTTP_200_OK)
-    
+
     @detail_route(methods=['GET'])
-    def aggregate(self, request, id=None,*args, **kwargs):
+    def aggregate(self, request, id=None, *args, **kwargs):
         """
         Test distinct in mongoengine, this feature is used to get group user name
         """
         pipeline = {
             '$lookup':
             {
-                'from':'products',
-                'localField':'cartList',
-                'foreignField':'_id',
-                'as':'product_in_cartList'
+                'from': 'products',
+                'localField': 'cartList',
+                'foreignField': '_id',
+                'as': 'product_in_cartList'
             }
         }
+        snippets = Users.objects(id=id).aggregate(pipeline)
+        logger.debug(tuple(snippets)[0])
+        return Response('', status=status.HTTP_200_OK)
 
-        pipeline1 = {
-            '$match':{
-                'name':'user3082'
-            }
-        }
-        snippets = list(Users.objects(id=id).aggregate(pipeline1))
-        logger.debug(snippets)
-        serializer = UserSerializer(snippets)
-        logger.debug(serializer.data)
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        logger.debug(serializer.validated_data)
+        self.perform_update(serializer)
 
-        return Response('',status=status.HTTP_200_OK)
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+

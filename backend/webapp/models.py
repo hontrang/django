@@ -2,11 +2,11 @@
 declare models
 """
 import datetime
-
+import logging
 from django.db import models
 from mongoengine import *
 
-
+logger = logging.getLogger(__name__)
 class Collection(EmbeddedDocument):
     """
     included collection info of products
@@ -64,7 +64,7 @@ class Users(Document):
                        allow_blank=False, trim_whitespace=True)
     email = EmailField(domain_whitelist=None, allow_utf8_user=False,
                        allow_ip_domain=False, required=True)
-    birdthday = DateTimeField(default=datetime.datetime.now)
+    birdthday = DateTimeField(auto_now_add=True)
     password = StringField(input_type='password', max_length=50, min_length=8,
                            allow_blank=False, trim_whitespace=True, required=True)
     firstName = StringField(max_length=100, min_length=None,
@@ -75,12 +75,10 @@ class Users(Document):
                         collection_name='images')
     deliveryAddress = EmbeddedDocumentListField(DeliveryInfo)
     payment = EmbeddedDocumentListField(Payment)
-    returnItems=ListField(ReferenceField(Products,reverse_delete_rule=PULL ))
-    cartList = ListField(ReferenceField(Products,reverse_delete_rule=PULL ))
-    favorite = ListField(ReferenceField(Products,reverse_delete_rule=PULL ))
+    returnItems=ListField(ReferenceField(Products,reverse_delete_rule=PULL, dbref=True ))
+    cartList = ListField(ReferenceField(Products,reverse_delete_rule=PULL,dbref=True))
+    favorite = ListField(ReferenceField(Products,reverse_delete_rule=PULL,dbref=True ))
     created = DateTimeField(default=datetime.datetime.now)
     level = IntField(min_value=1, max_value=5, default=1)
     group = StringField(default='customer',
                         allow_blank=False, trim_whitespace=True)
-    # group = ListField(StringField(), default=["customer","admin","provider"])
-# Create your models here.

@@ -1,25 +1,40 @@
-import time
-import os
+import pytest
+from rest_framework.exceptions import ValidationError
 
-from django.conf import settings
-class FileHandle():
-    def saveFileLocal(source):
-        filesrc = source
-        ch = filesrc.chunks()
-        filename = "%s-%s" %(str(time.time()).replace('.','_'), filesrc.name)
-        with open('%s/%s' %(settings.STATICFILES_DIRS, filename ), 'w+b') as file:
-            for d in ch:
-                file.write(d)
-            file.close()
-        return filename
-    
-    def deleteExistedLocal(source):
-        filename = '%s/%s' %(settings.STATICFILES_DIRS, source )
-        if os.path.isfile(filename):
-            try:
-                os.remove(filename)
-                return filename
-            except OSError as e:
-                print ("Error: %s - %s." % (e.filename,e.strerror))
-                return e.filename
 
+def dedent(blocktext):
+    return '\n'.join([line[12:] for line in blocktext.splitlines()[1:-1]])
+
+
+def get_items(mapping_or_list_of_two_tuples):
+    # Tests accept either lists of two tuples, or dictionaries.
+    if isinstance(mapping_or_list_of_two_tuples, dict):
+        # {value: expected}
+        return mapping_or_list_of_two_tuples.items()
+    # [(value, expected), ...]
+    return mapping_or_list_of_two_tuples
+
+
+class FieldTest():
+    """
+    Base class for testing valid and invalid input values.
+    """
+    def test_valid_inputs(self):
+        """
+        Ensure that valid values return the expected validated data.
+        """
+        for input_value, expected_output in get_items(self.valid_inputs):
+            assert self.field.run_validation(input_value) == expected_output
+
+    def test_invalid_inputs(self):
+        """
+        Ensure that invalid values raise the expected validation error.
+        """
+        for input_value, expected_failure in get_items(self.invalid_inputs):
+            with pytest.raises(ValidationError) as exc_info:
+                self.field.run_validation(input_value)
+            assert expected_failure in exc_info.value.detail[0]
+
+    def test_outputs(self):
+        for output_value, expected_output in get_items(self.outputs):
+            assert self.field.to_representation(output_value) == expected_output

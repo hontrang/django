@@ -162,7 +162,7 @@ class HttpServiceTestCase(unittest.TestCase):
         """
         test to add 200 users in a short time
         """
-        for index in range(0, 200):
+        for index in range(0, 20):
             with open('./client_assets/dog.jpg', 'rb') as file:
                 random = randint(0, 10000)
                 data = {
@@ -189,19 +189,23 @@ class HttpServiceTestCase(unittest.TestCase):
         responsep0 = self.client.get(
             'http://localhost:8000/webapp/api/products/')
         self.assertEqual(responsep0.status_code, 200)
-        product0 = responsep0.data['results'][0]
-        product1 = responsep0.data['results'][1]
-        product2 = responsep0.data['results'][2]
+        product0 = responsep0.data['results'][10]
+        product1 = responsep0.data['results'][11]
+        product2 = responsep0.data['results'][12]
         users = self.client.get(
             'http://localhost:8000/webapp/api/users/')
         responseu0 = self.client.get(
             'http://localhost:8000/webapp/api/users/{userid}/'.format(userid=users.data['results'][0]['id']))
         self.assertEqual(responseu0.status_code, 200)
         user0 = responseu0.data
-        _list = [{'_id': product0['id']},{'_id': product1['id']},{'_id': product2['id']}]
-
-        responseu1 = self.client.patch(
-            'http://localhost:8000/webapp/api/users/%s/' % user0['id'], {'cartList': _list}, format='json')
+        # _list = {'_id': product0['id']}
+        _list = [{'_id': product0['id']}, {
+            '_id': product1['id']}, {'_id': product2['id']}]
+        random = randint(0, 10000)
+        data = {'name': 'user%d' % random, 'email': 'user%d@email.com' % random, 'password': '12345678',
+                'firstName': 'user%d' % random, 'lastName': 'user%d' % random, 'level': 1, 'group': 'cust', 'cartList': _list}
+        responseu1 = self.client.put(
+            'http://localhost:8000/webapp/api/users/%s/' % user0['id'], data, format='multipart')
         responseu2 = self.client.get(
             'http://localhost:8000/webapp/api/users/%s/' % user0['id'])
         logger.debug(responseu1.data)

@@ -14,7 +14,7 @@ TIMEOUT %SLEEP_TIME%
 ECHO %DIR%
 CD %ROOT%
 REM python manage.py test webapp
-pytest -v --junitxml=report.xml
+pytest -v --junitxml=report.xml --html=report.html
 
 CD ..
 PAUSE
