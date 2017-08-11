@@ -16,7 +16,7 @@ from rest_framework.decorators import api_view, detail_route, list_route
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework_mongoengine import viewsets
-
+from .utils import FileHandle
 from .models import Products, Users
 from .pagination import *
 from .serializers import ProductSerializer, UserSerializer
@@ -30,63 +30,21 @@ class BaseViewSet(viewsets.ModelViewSet):
     Create a model instance.
     """
 
+    def initialize_request(self, request, *args, **kwargs):
+        """
+        Set the `.action` attribute on the view,
+        depending on the request method.
+        """
+        request = super(BaseViewSet, self).initialize_request(request, *args, **kwargs)
+        # logger.debug(type(request))
+        # logger.debug(request.data.getlist('cartList',None))
+        return request
+
 
 class ProductViewSet(BaseViewSet):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'id'
-    """
-    Create a model instance.
-    """
-
-    def create(self, request, *args, **kwargs):
-        # request.data['imageUrl'] = FileHandle.saveFileLocal(
-        #     self, request.data['imageSource'])
-        logger.debug(request.data)
-        # if request.data['collection']:
-        #     request.data['collection'] = ast.literal_eval(request.data['collection'])
-        collection = request.data.get('collection')
-        collection = self.convertStringToDict(collection)
-        request.data['collection'] = collection
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    def update(self, request, *args, **kwargs):
-        """
-        Update a model instance.
-        """
-        # request.data['imageUrl'] = FileHandle.saveFileLocal(
-        #     self, request.data['imageSource'])
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        # FileHandle.deleteExistedLocal(self, instance['imageUrl'])
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        if getattr(instance, '_prefetched_objects_cache', None):
-            # If 'prefetch_related' has been applied to a queryset, we need to
-            # forcibly invalidate the prefetch cache on the instance.
-            instance._prefetched_objects_cache = {}
-
-        return Response(serializer.data)
-
-    def perform_create(self, serializer):
-        serializer.save()
-
-    def convertStringToDict(self, data):
-        if type(data) is str:
-            return ast.literal_eval(data)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        # FileHandle.deleteExistedLocal(self, instance['imageUrl'])
-        self.perform_destroy(instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @list_route(methods=['GET'])
     def collection(self, request, *args, **kwargs):
@@ -94,7 +52,6 @@ class ProductViewSet(BaseViewSet):
         Test distinct in mongoengine, this feature is used to get category name
         """
         snippets = Products.objects.distinct('collection.collectionName')
-        logger.debug(snippets)
         return Response(snippets, status=status.HTTP_200_OK)
 
     @detail_route(methods=['GET'])
@@ -150,27 +107,25 @@ class ProductViewSet(BaseViewSet):
         serializer = ProductSerializer(snippets, many=True)
         return Response(serializer.data)
 
-    @detail_route(methods=['PUT'])
+    @detail_route(methods=['PUT', 'POST'])
     def likeup(self, request, *args, **kwargs):
         """
         Method to add 1 to like
         """
         instance = self.get_object()
-        _like = instance['like']
-        _like += 1
-        snippets = Products.objects.update(like=_like)
-        return Response(status=status.HTTP_201_CREATED)
+        _like = instance['like'] + 1
+        snippets = Products.objects.get(id=instance['id']).update(like=_like)
+        return Response(status=status.HTTP_200_OK)
 
-    @detail_route(methods=['PUT'])
+    @detail_route(methods=['PUT', 'POST'])
     def likedown(self, request, *args, **kwargs):
         """
         Method to minus 1 to like
         """
         instance = self.get_object()
-        _like = instance['like']
-        _like -= 1
-        snippets = Products.objects.update(like=_like)
-        return Response(status=status.HTTP_201_CREATED)
+        _like = instance['like'] - 1
+        snippets = Products.objects.get(id=instance['id']).update(like=_like)
+        return Response(status=status.HTTP_200_OK)
 
     @detail_route(methods=['GET'])
     def price(self, request, id, *args, **kwargs):
@@ -232,9 +187,7 @@ class UserViewSet(BaseViewSet):
         Login user, check group of user, if pass return 200, else return 405
         """
         snippets = Users.objects.get(email=request.data['email'])
-        logger.debug(snippets)
         serializer = UserSerializer(snippets)
-        logger.debug(serializer.data)
         if (serializer.data['password'] == request.data['password']):
             return Response(serializer.data)
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -242,7 +195,6 @@ class UserViewSet(BaseViewSet):
     @list_route(methods=['GET'])
     def group_user(self, *args, **kwargs):
         snippets = Users.objects.distinct('group')
-        logger.debug(snippets)
         return Response(snippets, status=status.HTTP_200_OK)
 
     @detail_route(methods=['GET'])
@@ -278,22 +230,4 @@ class UserViewSet(BaseViewSet):
             }
         }
         snippets = Users.objects(id=id).aggregate(pipeline)
-        logger.debug(tuple(snippets)[0])
         return Response('', status=status.HTTP_200_OK)
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        logger.debug(serializer.validated_data)
-        self.perform_update(serializer)
-
-        if getattr(instance, '_prefetched_objects_cache', None):
-            # If 'prefetch_related' has been applied to a queryset, we need to
-            # forcibly invalidate the prefetch cache on the instance.
-            instance._prefetched_objects_cache = {}
-
-        return Response(serializer.data)
-
-

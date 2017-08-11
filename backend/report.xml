@@ -1,11 +1,83 @@
-<?xml version="1.0" encoding="utf-8"?><testsuite errors="0" failures="0" name="pytest" skips="0" tests="1" time="0.549"><testcase classname="webapp.tests.test_http_connection.HttpServiceTestCase" file="webapp\tests\test_http_connection.py" line="184" name="test_add_item_to_cart_list" time="0.27901625633239746"><system-out>[&apos;name&apos;]user4132
-[&apos;email&apos;]user4132@email.com
+<?xml version="1.0" encoding="utf-8"?><testsuite errors="0" failures="1" name="pytest" skips="0" tests="1" time="0.579"><testcase classname="webapp.tests.test_http_connection.HttpServiceTC" file="webapp\tests\test_http_connection.py" line="327" name="test_singlr_reference" time="0.32301855087280273"><failure message="AssertionError: 400 != 201">self = &lt;test_http_connection.HttpServiceTC testMethod=test_singlr_reference&gt;
+
+    def test_singlr_reference(self):
+        coll = [{
+            &quot;collectionName&quot;: &quot;Apple %d&quot; % randint(0, 9),
+            &quot;collectionDesc&quot;: &quot;Apple desc %s&quot; % (randint(0, 9))
+        }]
+        data = {
+            &apos;title&apos;: &apos;likeup&apos;,
+            &apos;collection&apos;: coll,
+            &apos;like&apos;: 100
+        }
+        p0 = self.client.post(
+            &apos;http://localhost:8000/webapp/api/products/&apos;, data, format=&apos;json&apos;)
+        self.assertEqual(p0.status_code, 201)
+        list_product = {&apos;_id&apos;: p0.data[&apos;id&apos;]}
+        random = randint(0,100)
+        data = {&apos;name&apos;: &apos;TEST_reference_field_cascade&apos;, &apos;email&apos;: &apos;user1@email.com&apos;, &apos;password&apos;: &apos;12345678&apos;,
+                &apos;firstName&apos;: &apos;user1&apos;, &apos;lastName&apos;: &apos;user1&apos;, &apos;level&apos;: 1, &apos;group&apos;: &apos;cust&apos;, &apos;cartList&apos;: list_product}
+        u1 = self.client.post(&apos;http://localhost:8000/webapp/api/users/&apos;, data, format=&apos;json&apos;)
+&gt;       self.assertEqual(u1.status_code, 201)
+E       AssertionError: 400 != 201
+
+webapp\tests\test_http_connection.py:346: AssertionError</failure><system-out>validating None - {&apos;title&apos;: &apos;likeup&apos;, &apos;collection&apos;: [{&apos;collectionName&apos;: &apos;Apple 8&apos;, &apos;collectionDesc&apos;: &apos;Apple desc 0&apos;}], &apos;like&apos;: 100}
+validating title - likeup
+[&apos;title&apos;]likeup
+validating collection - [{&apos;collectionName&apos;: &apos;Apple 8&apos;, &apos;collectionDesc&apos;: &apos;Apple desc 0&apos;}]
+validating  - {&apos;collectionName&apos;: &apos;Apple 8&apos;, &apos;collectionDesc&apos;: &apos;Apple desc 0&apos;}
+validating collectionName - Apple 8
+[&apos;collectionName&apos;]Apple 8
+validating collectionDesc - Apple desc 0
+[&apos;collectionDesc&apos;]Apple desc 0
+[&apos;collection&apos;][OrderedDict([(&apos;collectionName&apos;, &apos;Apple 8&apos;), (&apos;collectionDesc&apos;, &apos;Apple desc 0&apos;)])]
+validating simpleDesc - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+[&apos;simpleDesc&apos;]To be updated
+validating fullDesc - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+[&apos;fullDesc&apos;]To be updated
+validating price - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating views - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating like - 100
+[&apos;like&apos;]100
+validating created - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+[&apos;created&apos;]2017-08-11 23:14:29.442717
+validating imageSource - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating discount - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating None - {&apos;name&apos;: &apos;TEST_reference_field_cascade&apos;, &apos;email&apos;: &apos;user1@email.com&apos;, &apos;password&apos;: &apos;12345678&apos;, &apos;firstName&apos;: &apos;user1&apos;, &apos;lastName&apos;: &apos;user1&apos;, &apos;level&apos;: 1, &apos;group&apos;: &apos;cust&apos;, &apos;cartList&apos;: {&apos;_id&apos;: &apos;598dd7e596279a25e44d3153&apos;}}
+validating cartList - {&apos;_id&apos;: &apos;598dd7e596279a25e44d3153&apos;}
+validating title - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating collection - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating simpleDesc - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+[&apos;simpleDesc&apos;]To be updated
+validating fullDesc - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+[&apos;fullDesc&apos;]To be updated
+validating price - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating views - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating like - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating created - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+[&apos;created&apos;]2017-08-11 23:14:29.657729
+validating imageSource - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating discount - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating name - TEST_reference_field_cascade
+[&apos;name&apos;]TEST_reference_field_cascade
+validating email - user1@email.com
+[&apos;email&apos;]user1@email.com
+validating birdthday - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating password - 12345678
 [&apos;password&apos;]12345678
-[&apos;firstName&apos;]user4132
-[&apos;lastName&apos;]user4132
-[&apos;returnItems&apos;][]
-[&apos;favorite&apos;][]
-[&apos;created&apos;]2017-07-31 23:43:49.728394
+validating firstName - user1
+[&apos;firstName&apos;]user1
+validating lastName - user1
+[&apos;lastName&apos;]user1
+validating avatar - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating deliveryAddress - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating payment - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating returnItems - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating favorite - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+validating created - &lt;class &apos;rest_framework.fields.empty&apos;&gt;
+[&apos;created&apos;]2017-08-11 23:14:29.658729
+validating level - 1
 [&apos;level&apos;]1
+validating group - cust
 [&apos;group&apos;]cust
 </system-out></testcase></testsuite>
