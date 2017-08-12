@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-from mongoengine import connect
+# from mongoengine import connect
 import logging
 
 
@@ -41,9 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework_mongoengine',
+    # 'rest_framework_mongoengine',
     'rest_framework_swagger',
-    'webapp',
+    # 'webapp',
+    'webappsql',
     'corsheaders'
 ]
 
@@ -90,19 +91,22 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django_postgres',
+        'CHARSET': 'UTF8',
+        'USER': 'postgres',
+        'PASSWORD': '123456',
     }
 }
 
-_MONGODB_USER = ''
-_MONGODB_PASSWD = ''
-_MONGODB_HOST = '127.0.0.1'
-_MONGODB_NAME = 'django'
-_MONGODB_PORT = 27017
+# _MONGODB_USER = ''
+# _MONGODB_PASSWD = ''
+# _MONGODB_HOST = '127.0.0.1'
+# _MONGODB_NAME = 'django'
+# _MONGODB_PORT = 27017
 
-connect(db=_MONGODB_NAME, host=_MONGODB_HOST, port=_MONGODB_PORT,
-        username=_MONGODB_NAME, password=_MONGODB_PASSWD)
+# connect(db=_MONGODB_NAME, host=_MONGODB_HOST, port=_MONGODB_PORT,
+#         username=_MONGODB_NAME, password=_MONGODB_PASSWD)
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
@@ -225,6 +229,9 @@ STATIC_URL = '/static/'
 
 
 REST_FRAMEWORK = {
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAdminUser',
+    # ],
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     'DEFAULT_PAGINATION_CLASS': 'webapp.pagination.StandardResultsSetPagination',
     'DEFAULT_RENDERER_CLASSES': (
