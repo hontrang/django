@@ -31,6 +31,7 @@ pip install -U pytest
 pip install pytest-django
 pip install pytest-cov
 pip install coverage
+pip install psycopg2
 
 CD %ROOT%
 ECHO %CD%

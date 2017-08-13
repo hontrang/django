@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 # Create your tests here.
 
-# @pytest.mark.skip(reason="Disable test at develop")
+@pytest.mark.skip(reason="Disable test at develop")
 class HttpServiceTC(unittest.TestCase):
     """
     Testcases to validate http service usage, use rest framework api test
