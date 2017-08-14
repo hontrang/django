@@ -30,7 +30,7 @@ class CollectionSerializer(serializers.ModelSerializer):
         depth=2
 
 class UserSerializer(serializers.ModelSerializer):
-    # cartList = ProductsSerializer(many=True)
+    # avatar = serializers.ImageField(max_length=None, use_url=True)
     class Meta:
         model = User
         fields = '__all__'

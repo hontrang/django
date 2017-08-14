@@ -91,10 +91,15 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django_postgres',
+        'NAME': 'pg_django',
         'CHARSET': 'UTF8',
         'USER': 'postgres',
         'PASSWORD': '123456',
+        'HOST': '',
+        'PORT':'',
+        'TEST':{
+            'NAME':'pg_django'
+        }
     }
 }
 
@@ -205,7 +210,12 @@ CORS_ORIGIN_WHITELIST = (
 )
 STATICFILES_DIRS = STATICFILES_DIRS = [
     './static',
+    './storage'
 ]
+
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR),'static')
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR),'media')
+MEDIA_URL= '/media/'
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
@@ -225,7 +235,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-
 
 REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [

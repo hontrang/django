@@ -325,7 +325,7 @@ class HttpServiceTC(unittest.TestCase):
                 self.client.delete('http://localhost:8000/webapp/users/%s/' %index['_id'])
         # cleanup user
         self.client.delete('http://localhost:8000/webapp/api/users/%s/'%u0.data['id'])
-    def test_singlr_reference(self):
+    def test_single_reference(self):
         coll = [{
             "collectionName": "Apple %d" % randint(0, 9),
             "collectionDesc": "Apple desc %s" % (randint(0, 9))
