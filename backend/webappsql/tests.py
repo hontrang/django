@@ -38,3 +38,15 @@ class TestWebapp2(TestCase):
                 r0 = self.client.post('http://localhost:8000/webapp2/api/product/', data, format='multipart')
                 logger.debug(r0.data)
                 self.assertEqual(r0.status_code, 201)
+
+    def test_file_is_deleted_correctly_on_system_when_product_deletion_occurs(self):
+        """This test case will validate file field in model product before/after deletion, 
+        file should exists before and not exists after deletion
+        """
+        pass
+
+    def test_old_file_is_deleted_correctly_on_system_when_product_deletion_occurs(self):
+        """This test case will validate file field in model product before/after updating,
+        old file should be deleted out of system and new file should exists
+        """
+        pass

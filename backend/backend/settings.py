@@ -213,7 +213,17 @@ STATICFILES_DIRS = STATICFILES_DIRS = [
     './storage'
 ]
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.11/howto/static-files/
+# STATIC_ROOT have serious security implications, 
+# refer https://docs.djangoproject.com/en/1.11/ref/settings/#std:setting-MEDIA_ROOT
+# only work id DEBUG=True
+
+# for complicated serving static files in enterprise environment, follow below link:
+#     https://docs.djangoproject.com/en/1.11/howto/static-files/deployment/
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR),'static')
+# only work id DEBUG=True
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR),'media')
 MEDIA_URL= '/media/'
 # Internationalization
@@ -231,10 +241,6 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.11/howto/static-files/
-
-STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [

@@ -8,4 +8,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),#ex:
     # url(r'^webapp/', include('webapp.urls')), #ex:
     url(r'^webapp2/', include('webappsql.urls')), #ex:
+# routing MEDIA_URL
+# refer https://docs.djangoproject.com/en/1.11/howto/static-files/
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
