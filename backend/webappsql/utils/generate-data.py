@@ -103,6 +103,8 @@ def generateUser():
         print(r0.json())
         assert r0.status_code == 201
 
+
+
 if __name__ == '__main__':
     generateProduct()
     generateCollection()

@@ -46,12 +46,4 @@ class CollectionViewSet(viewsets.ModelViewSet):
     queryset = Collection.objects.all()
     serializer_class = CollectionSerializer
 
-@csrf_exempt
-def upload_file_view(request):
-    return _upload_file_view(request)
-
-@csrf_protect
-def _upload_file_view(request):
-    print('Inside {}.{}'.format(__file__,__name__))
-    logger.debug('Inside {}.{}'.format(__file__,__name__))
 

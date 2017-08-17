@@ -108,3 +108,6 @@ def user_pre_save_signal(sender, instance, raw, using, update_fields, **kwargs):
         if os.path.isfile(oldAvatar.avatar.path):
             oldAvatar.avatar.delete(save=False)
 
+@receiver(post_save, sender=User)
+def user_post_save_signal(sender, instance, using, **kwargs):
+    pass

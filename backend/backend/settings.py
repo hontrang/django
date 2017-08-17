@@ -97,9 +97,6 @@ DATABASES = {
         'PASSWORD': '123456',
         'HOST': '',
         'PORT':'',
-        'TEST':{
-            'NAME':'pg_django'
-        }
     }
 }
 
@@ -164,7 +161,7 @@ LOGGING = {
     },
     'loggers':{
         '': {
-            'handlers': ['file_lc'],
+            'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True
         },
