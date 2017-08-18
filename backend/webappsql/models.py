@@ -4,7 +4,7 @@ import os
 from django import forms
 from django.db import models
 
-from django.db.models.signals import pre_delete, pre_save, post_save, post_delete
+from django.db.models.signals import pre_delete, pre_save, post_save, post_delete, post_init
 from django.dispatch.dispatcher import receiver
 
 logger = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ class User(models.Model):
     password = models.CharField(max_length=20)
     firstName = models.CharField(max_length=100,default="To be updated")
     lastName = models.CharField(max_length=100,default="To be updated")
-    avatar = models.ImageField(max_length=100, default="To be updated", upload_to="storage")
+    avatar = models.ImageField(max_length=100, default="To be updated", upload_to="images")
     deliveryAddress = models.ForeignKey('DeliveryInfo',null=True,related_name='deliveryinfo')
     # payment = models.ForeignKey('Payment',null=True,related_name='user_payment')
     returnItems= models.ManyToManyField('Product', blank=True,related_name='returnitems')
@@ -67,7 +67,7 @@ class Product(models.Model):
     views = models.IntegerField(default=0)
     like = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True, null=True)
-    imageSource = models.ImageField(max_length=100, default="To be updated", upload_to="storage")
+    imageSource = models.ImageField(max_length=100, default="To be updated", upload_to="images")
     discount = models.CharField(max_length=100, default='To be updated')
     
     def __str__(self):
@@ -92,8 +92,9 @@ def product_post_delete_signal(sender, instance, using,**kwargs):
 def product_pre_save_signal(sender, instance, raw, using, update_fields, **kwargs):
     if instance.pk:
         oldInstance = sender.objects.get(id=instance.pk)
-        if os.path.isfile(oldInstance.imageSource.path):
-            oldInstance.imageSource.delete(save=False)
+        if oldInstance.imageSource.path != instance.imageSource.path:
+            if os.path.isfile(oldInstance.imageSource.path):
+                oldInstance.imageSource.delete(save=False)
 
 @receiver(post_delete, sender=User)
 def user_post_delete_signal(sender, instance, using, **kwargs):
@@ -103,11 +104,10 @@ def user_post_delete_signal(sender, instance, using, **kwargs):
 
 @receiver(pre_save, sender=User)
 def user_pre_save_signal(sender, instance, raw, using, update_fields, **kwargs):
+    # check if update
     if instance.pk:
-        oldAvatar = sender.objects.get(id=instance.pk)
-        if os.path.isfile(oldAvatar.avatar.path):
-            oldAvatar.avatar.delete(save=False)
-
-@receiver(post_save, sender=User)
-def user_post_save_signal(sender, instance, using, **kwargs):
-    pass
+        # avatar is updating
+        oldInstance = sender.objects.get(id=instance.pk)
+        if oldInstance.avatar.path != instance.avatar.path:
+            if os.path.isfile(oldInstance.avatar.path):
+                oldInstance.avatar.delete(save=False)

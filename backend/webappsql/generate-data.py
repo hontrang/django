@@ -4,7 +4,7 @@ from random import randint
 import logging
 import unittest
 import uuid
-
+from webappsql.utils import randomNumber
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 def generateProduct():
     for index in range(1, 100):
         rand = randint(1, 100)
-        file = open('../client_assets/dog.jpg', 'rb')
+        file = open('client_assets/dog.jpg', 'rb')
         product = {
             'title': f'san pham {rand}',
             'simpleDesc': f'san pham desc {rand}',
@@ -34,7 +34,7 @@ def generateCollection():
     lt = ['Apple', 'Samsung', 'Nokia', 'Blackberry', 'LG', 'Xiaomi', 'Oppo', 'Lenovo']
     for index in lt:
         rand = randint(1, 100)
-        file = open('../client_assets/dog.jpg', 'rb')
+        file = open('client_assets/dog.jpg', 'rb')
         
         collection = {
             'collectionName': index,
@@ -47,11 +47,7 @@ def generateCollection():
                            data=encoder, headers={'Content-Type': encoder.content_type})
         print(r0.json())
         assert r0.status_code == 201
-def randomNumber():
-    string = ''
-    for i in range(12):
-        string+= str(randint(0,9))
-    return string
+
 
 def generatePayment():
     for i in range(10):
@@ -85,7 +81,7 @@ def generateDeliveryInfo():
         
 def generateUser():
     for i in range(100):
-        file = open('../client_assets/index.jpg', 'rb')
+        file = open('client_assets/index.jpg', 'rb')
         rand = randint(1,10)
         user = {
           'name': 'khach hang %d' %rand,

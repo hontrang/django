@@ -15,6 +15,8 @@ class TestWebapp2(TestCase):
         Setting up testcases
         """
         self.client = APIClient()
+        self.file = open('./client_assets/index.jpg', 'rb')
+        self.file1 = open('./client_assets/dog.jpg', 'rb')
 
     def tearDown(self):
         """
@@ -26,7 +28,6 @@ class TestWebapp2(TestCase):
         """This test case will validate file field in model user before/after deletion, 
         file should exists before and not exists after deletion
         """
-        file = open('./client_assets/index.jpg', 'rb')
         rand = randint(1,10)
         user = {
           'name': 'khach hang %d' %rand,
@@ -34,7 +35,7 @@ class TestWebapp2(TestCase):
           'password': '123456789',
           'firstName': 'khach',
           'lastName': 'hang %d' %rand,
-          'avatar': (file.name,file),
+          'avatar': (self.file.name,self.file),
           'level': '%d' %1,
           'group':  'cust',
         }
@@ -50,8 +51,6 @@ class TestWebapp2(TestCase):
         """This test case will validate file field in model user before/after updating,
         old file should be deleted out of system and new file should exists
         """
-        file = open('./client_assets/index.jpg', 'rb')
-        file1 = open('./client_assets/dog.jpg', 'rb')
         rand = randint(1,10)
         user0 = {
           'name': 'khach hang %d' %rand,
@@ -59,7 +58,7 @@ class TestWebapp2(TestCase):
           'password': '123456789',
           'firstName': 'khach',
           'lastName': 'hang %d' %rand,
-          'avatar': (file.name,file),
+          'avatar': (self.file.name,self.file),
           'level': '%d' %1,
           'group':  'cust',
         }
@@ -69,14 +68,13 @@ class TestWebapp2(TestCase):
           'password': '123456789',
           'firstName': 'khach',
           'lastName': 'hang %d' %rand,
-          'avatar': (file1.name,file1),
+          'avatar': (self.file1.name,self.file1),
           'level': '%d' %1,
           'group':  'cust',
         }
         r0 = self.client.post('http://localhost:8000/webapp2/api/user/', user0 , format='multipart')
         self.assertEqual(r0.status_code, 201)
         self.assertIsNotNone(r0.data['avatar'])
-        logger.debug(translate_testserver_to_localhost(r0.data['avatar']))
         # APIClient always returns 404 not found, use requests library instead
         a1 = requests.get(translate_testserver_to_localhost(r0.data['avatar']))
         self.assertEqual(a1.status_code, 200)
@@ -94,3 +92,34 @@ class TestWebapp2(TestCase):
         self.assertEqual(r2.status_code, 204)
         a4 = requests.get(translate_testserver_to_localhost(r1.data['avatar']))
         self.assertEqual(a4.status_code, 404)
+
+    def test_file_still_existing_when_update_user_without_avatar(self):
+        """This test case will validate when user updating without avatar field, 
+        image file in system must still exist
+        """
+        rand = randint(1,10)
+        user0 = {
+          'name': 'khach hang %d' %rand,
+          'email': 'khachhang%d@email.com' %rand,
+          'password': '123456789',
+          'firstName': 'khach',
+          'lastName': 'hang %d' %rand,
+          'avatar': (self.file.name,self.file),
+          'level': '%d' %1,
+          'group':  'cust',
+        }
+        user1 = {
+          'name': 'khach hang %d updated' %rand,
+        }
+        r0 = self.client.post('http://localhost:8000/webapp2/api/user/', user0, format='multipart')
+        self.assertEqual(r0.status_code, 201)
+        a0= requests.get(translate_testserver_to_localhost(r0.data['avatar']))
+        self.assertEqual(a0.status_code, 200)
+        r1 = self.client.patch('http://localhost:8000/webapp2/api/user/%s/' %r0.data['id'], user1)
+        self.assertEqual(r1.status_code, 200)
+        a1 = requests.get(translate_testserver_to_localhost(r1.data['avatar']))
+        self.assertEqual(a1.status_code, 200)
+        r2 = self.client.delete('http://localhost:8000/webapp2/api/user/%s/' %r0.data['id'])
+        self.assertEqual(r2.status_code, 204)
+
+
