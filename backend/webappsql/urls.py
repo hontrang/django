@@ -5,7 +5,7 @@ from webappsql import views
 
 
 router = routers.DefaultRouter()
-router.register(r'user', views.UserViewSet)
+router.register(r'customer', views.CustomerViewSet)
 router.register(r'deliveryinfo', views.DeliveryInfoViewSet)
 router.register(r'payment', views.PaymentViewSet)
 router.register(r'product', views.ProductViewSet)

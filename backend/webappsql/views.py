@@ -2,8 +2,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import HttpResponse
-from webappsql.models import User, DeliveryInfo, Payment, Product, Collection
-from webappsql.serializers import UserSerializer, DeliveryInfoSerializer, PaymentSerializer, ProductSerializer, CollectionSerializer
+from webappsql.models import Customer, DeliveryInfo, Payment, Product, Collection
+from webappsql.serializers import CustomerSerializer, DeliveryInfoSerializer, PaymentSerializer, ProductSerializer, CollectionSerializer
 from django.shortcuts import render
 
 from django.shortcuts import get_object_or_404
@@ -18,12 +18,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class CustomerViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
 
 
 class DeliveryInfoViewSet(viewsets.ModelViewSet):

@@ -4,7 +4,7 @@ from random import randint
 import logging
 import unittest
 import uuid
-from webappsql.utils import randomNumber
+from utils import randomNumber
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 def generateProduct():
     for index in range(1, 100):
         rand = randint(1, 100)
-        file = open('client_assets/dog.jpg', 'rb')
+        file = open('../client_assets/dog.jpg', 'rb')
         product = {
             'title': f'san pham {rand}',
             'simpleDesc': f'san pham desc {rand}',
@@ -34,7 +34,7 @@ def generateCollection():
     lt = ['Apple', 'Samsung', 'Nokia', 'Blackberry', 'LG', 'Xiaomi', 'Oppo', 'Lenovo']
     for index in lt:
         rand = randint(1, 100)
-        file = open('client_assets/dog.jpg', 'rb')
+        file = open('../client_assets/dog.jpg', 'rb')
         
         collection = {
             'collectionName': index,
@@ -54,7 +54,7 @@ def generatePayment():
         rand = randint(0,9)
         payment = {
             'cardBrand': 'the tin dung ngan hang %d' % rand,
-            'cardNumber': randomNumber()
+            'cardNumber': randomNumber(12)
         }
         encoder = MultipartEncoder(payment)
         r0 = requests.post('http://localhost:8000/webapp2/api/payment/',
@@ -67,7 +67,7 @@ def generateDeliveryInfo():
         rand = randint(1,10)
         deliveryinfo = {
             'name': 'Ten dia chi giao hang %d' % rand,
-            'phoneNumber': randomNumber(),
+            'phoneNumber': randomNumber(12),
             'homeAddress': 'dia chi nha %d' %rand,
             'province': 'Thanh pho Ho Chi Minh',
             'district': 'Quan %d' %rand,
@@ -79,11 +79,11 @@ def generateDeliveryInfo():
         print(r0.json())
         assert r0.status_code == 201
         
-def generateUser():
+def generateCustomer():
     for i in range(100):
-        file = open('client_assets/index.jpg', 'rb')
+        file = open('../client_assets/index.jpg', 'rb')
         rand = randint(1,10)
-        user = {
+        customer = {
           'name': 'khach hang %d' %rand,
           'email': 'khachhang%d@email.com' %rand,
           'password': '123456789',
@@ -93,8 +93,8 @@ def generateUser():
           'level': '%d' %1,
           'group':  'cust',
         }
-        encoder = MultipartEncoder(user)
-        r0 = requests.post('http://localhost:8000/webapp2/api/user/',
+        encoder = MultipartEncoder(customer)
+        r0 = requests.post('http://localhost:8000/webapp2/api/customer/',
                            data=encoder, headers={'Content-Type': encoder.content_type})
         print(r0.json())
         assert r0.status_code == 201
@@ -102,9 +102,9 @@ def generateUser():
 
 
 if __name__ == '__main__':
-    generateProduct()
-    generateCollection()
-    generatePayment()
-    generateDeliveryInfo()
-    generateUser()
+    # generateProduct()
+    # generateCollection()
+    # generatePayment()
+    # generateDeliveryInfo()
+    generateCustomer()
 

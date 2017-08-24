@@ -8,12 +8,13 @@
         "test*.py"
     ],
     "python.unitTest.unittestEnabled": false,
-    "python.unitTest.pyTestEnabled": true,
+    "python.unitTest.pyTestEnabled": false,
     "python.unitTest.nosetestsEnabled": false,
     "python.linting.pylintArgs": [
         "--errors-only"
     ],
     "python.unitTest.pyTestArgs": [
         "."
-    ]
+    ],
+    "python.unitTest.promptToConfigure": false
 }

@@ -3,7 +3,7 @@ import pytest
 from random import randint
 from rest_framework.test import APIClient
 from django.test import TestCase
-from .views import UserViewSet, ProductViewSet
+from .views import CustomerViewSet, ProductViewSet
 from webappsql.utils import translate_testserver_to_localhost
 import time
 import requests

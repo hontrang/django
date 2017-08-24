@@ -1,12 +1,12 @@
 from django.contrib import admin
 
 # Register your models here.
-from webappsql.models import User, Product, DeliveryInfo, Payment, Collection
+from webappsql.models import Customer, Product, DeliveryInfo, Payment, Collection
 
-class UserAdmin(admin.ModelAdmin):
+class CustomerAdmin(admin.ModelAdmin):
     list_display = ('name','email','firstName', 'lastName','created','modified','avatar')
 
-admin.site.register(User, UserAdmin)
+admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Product)
 admin.site.register(DeliveryInfo)
 admin.site.register(Payment)

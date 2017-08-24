@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from webappsql.models import User, DeliveryInfo, Payment, Product, Collection
+from webappsql.models import Customer, DeliveryInfo, Payment, Product, Collection
 
 
 class DeliveryInfoSerializer(serializers.ModelSerializer):
@@ -30,10 +30,10 @@ class CollectionSerializer(serializers.ModelSerializer):
         depth = 2
 
 
-class UserSerializer(serializers.ModelSerializer):
+class CustomerSerializer(serializers.ModelSerializer):
     # avatar = serializers.ImageField(max_length=None, use_url=True)
     class Meta:
-        model = User
+        model = Customer
         fields = ('id','payment', 'name', 'email', 'birdthday', 'password', 'firstName', 'lastName', 'avatar',
                   'deliveryAddress', 'payment', 'returnItems', 'cartList', 'favorite', 'created', 'modified', 'level', 'group')
         depth = 2

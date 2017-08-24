@@ -11,9 +11,9 @@ logger = logging.getLogger(__name__)
 
 
 # Create your models here.
-class User(models.Model):
+class Customer(models.Model):
     """
-    Model for entire users ex:customer, administrator, moderator ...
+    Model for entire customers ex:customer, administrator, moderator ...
     """
     name = models.CharField(max_length=100, default="To be updated")
     email = models.EmailField(max_length=100,default="To be updated")
@@ -23,7 +23,7 @@ class User(models.Model):
     lastName = models.CharField(max_length=100,default="To be updated")
     avatar = models.ImageField(max_length=100, default="To be updated", upload_to="images")
     deliveryAddress = models.ForeignKey('DeliveryInfo',null=True,related_name='deliveryinfo')
-    # payment = models.ForeignKey('Payment',null=True,related_name='user_payment')
+    # payment = models.ForeignKey('Payment',null=True,related_name='customer_payment')
     returnItems= models.ManyToManyField('Product', blank=True,related_name='returnitems')
     cartList = models.ManyToManyField('Product', blank=True, related_name='cartlist')
     favorite = models.ManyToManyField('Product', blank=True, related_name='favorite')
@@ -50,7 +50,7 @@ class Payment(models.Model):
     cardBrand = models.CharField(max_length=100, default='To be updated')
     expirationDate = models.DateTimeField(auto_now_add=True)
     cardNumber = models.CharField(max_length=100, default='To be updated')
-    relatedUser = models.ForeignKey('User', null=True, related_name='payment')
+    relatedcustomer = models.ForeignKey('customer', null=True, related_name='payment')
     def __str__(self):
         return f'{self.pk} - {self.cardBrand} - {self.cardNumber[5:]}'
 
@@ -77,7 +77,7 @@ class Collection(models.Model):
     collectionName = models.CharField(max_length=100 ,default="To be updated")
     collectionDesc = models.TextField(max_length=500 ,default="To be updated")
     created = models.DateTimeField(auto_now_add=True, null=True)
-    author = models.ManyToManyField('User', blank=True)
+    author = models.ManyToManyField('customer', blank=True)
 
     def __str__(self):
         return f'{self.pk} - {self.collectionName}'
@@ -96,14 +96,14 @@ def product_pre_save_signal(sender, instance, raw, using, update_fields, **kwarg
             if os.path.isfile(oldInstance.imageSource.path):
                 oldInstance.imageSource.delete(save=False)
 
-@receiver(post_delete, sender=User)
-def user_post_delete_signal(sender, instance, using, **kwargs):
+@receiver(post_delete, sender=Customer)
+def customer_post_delete_signal(sender, instance, using, **kwargs):
     if instance.avatar:
         if os.path.isfile(instance.avatar.path):
             instance.avatar.delete(save=False)
 
-@receiver(pre_save, sender=User)
-def user_pre_save_signal(sender, instance, raw, using, update_fields, **kwargs):
+@receiver(pre_save, sender=Customer)
+def customer_pre_save_signal(sender, instance, raw, using, update_fields, **kwargs):
     # check if update
     if instance.pk:
         # avatar is updating
